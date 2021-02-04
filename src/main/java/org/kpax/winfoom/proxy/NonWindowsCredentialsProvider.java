@@ -21,6 +21,8 @@ import org.apache.http.client.CredentialsProvider;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.proxy.listener.StopListener;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.Principal;
 
@@ -29,6 +31,7 @@ import java.security.Principal;
  */
 public class NonWindowsCredentialsProvider implements CredentialsProvider, StopListener {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private ProxyConfig proxyConfig;
 
     private final SingletonSupplier<Credentials> credentialsSupplier = new SingletonSupplier<>(() -> {
@@ -40,6 +43,7 @@ public class NonWindowsCredentialsProvider implements CredentialsProvider, StopL
                     proxyConfig.getProxyHttpUsername().substring(backslashIndex + 1) : proxyConfig.getProxyHttpUsername();
             String domain = backslashIndex > -1 ?
                     proxyConfig.getProxyHttpUsername().substring(0, backslashIndex) : null;
+            logger.debug("Create NTLM credentials using username={}, domain={}", username, domain);
             return new NTCredentials(username, proxyConfig.getProxyHttpPassword(), null, domain);
         } else {
             return new UsernamePasswordCredentials(proxyConfig.getProxyHttpUsername(),

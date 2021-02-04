@@ -509,12 +509,12 @@ public class ProxyConfig {
     }
 
     public boolean isKerberos() {
-        return !SystemContext.IS_OS_WINDOWS &&
+        return !isAuthAutoMode() &&
                 proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isKerberos();
     }
 
     public boolean isNtlm() {
-        return !SystemContext.IS_OS_WINDOWS &&
+        return !isAuthAutoMode() &&
                 proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isNtlm();
     }
 
