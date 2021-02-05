@@ -14,7 +14,6 @@ package org.kpax.winfoom.pac.net;
 
 
 import inet.ipaddr.IPAddressString;
-import org.kpax.winfoom.exception.NativeException;
 import org.kpax.winfoom.util.functional.SingleExceptionSingletonSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +41,8 @@ public class IpAddresses {
      * A supplier for all primary IP addresses of the current Windows machine.
      */
     public static final SingleExceptionSingletonSupplier<InetAddress[], UnknownHostException> allPrimaryAddresses =
-            new SingleExceptionSingletonSupplier<>(() -> {
-                try {
-                    return InetAddress.getAllByName(Hostnames.stripDomain(Hostnames.getHostName()));
-                } catch (NativeException e) {
-                    throw new UnknownHostException(e.getMessage() + ", error code : " + e.getErrorCode());
-                }
-            });
+            new SingleExceptionSingletonSupplier<>(
+                    () -> InetAddress.getAllByName(Hostnames.stripDomain(InetAddress.getLocalHost().getHostName())));
 
     /**
      * A supplier for the primary IPv4 address of the current Windows machine.

@@ -28,10 +28,10 @@ for %%a in (%*) do (
 		exit /B 1;
 	)
 	if "%%a"=="--debug" (
-		set ARGS=%ARGS% -Dlogging.level.root=DEBUG -Dlogging.level.java.awt=INFO -Dlogging.level.sun.awt=INFO -Dlogging.level.javax.swing=INFO -Dlogging.level.jdk=INFO
+		set ARGS=!ARGS! -Dlogging.level.root=DEBUG -Dlogging.level.java.awt=INFO -Dlogging.level.sun.awt=INFO -Dlogging.level.javax.swing=INFO -Dlogging.level.jdk=INFO
 	)
 	if "%%a"=="--gui" (
-		set ARGS=%ARGS% -Dswing.aatext=true -Dspring.profiles.active=gui
+		set ARGS=!ARGS! -Dswing.aatext=true -Dspring.profiles.active=gui
 	)
 )
 

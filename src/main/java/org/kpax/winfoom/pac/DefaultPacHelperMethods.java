@@ -288,7 +288,7 @@ public class DefaultPacHelperMethods implements PacHelperMethodsNetscape, PacHel
     // *************************************************************
 
     public void alert(String message) {
-        logger.debug("PAC script says : {}", message);
+        logger.debug("PAC script says: {}", message);
     }
 
 

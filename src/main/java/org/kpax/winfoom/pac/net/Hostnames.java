@@ -31,8 +31,6 @@
 
 package org.kpax.winfoom.pac.net;
 
-import com.sun.jna.Native;
-import org.kpax.winfoom.exception.NativeException;
 import org.springframework.util.Assert;
 
 /**
@@ -42,38 +40,6 @@ import org.springframework.util.Assert;
  * @author ecovaci
  */
 public class Hostnames {
-
-    /**
-     * Gets the local host name.
-     *
-     * <p>
-     * The underlying Windows function may return a simple host name (e.g.
-     * {@code chicago}) or it may return a fully qualified host name (e.g.
-     * {@code chicago.us.internal.net}).
-     *
-     * <p>
-     * Note that the underlying Windows function will do a name service lookup
-     * and the method is therefore potentially blocking, although it is more
-     * than likely that Windows has cached this result in the DNS Client Cache
-     * and therefore the result will be returned very fast.
-     *
-     * <p>
-     * Windows API equivalent: {@code gethostname()} function from
-     * {@code Ws2_32} library.
-     *
-     * @return the hostname
-     * @throws NativeException if there was an error executing the
-     *                         system call.
-     */
-    public static String getHostName() throws NativeException {
-        byte[] buf = new byte[256];
-        int returnCode = Winsock2Lib.INSTANCE.gethostname(buf, buf.length);
-        if (returnCode == 0) {
-            return Native.toString(buf);
-        } else {
-            throw new NativeException(returnCode, "error calling 'gethostname()' function");
-        }
-    }
 
     /**
      * Strips the domain part from a host name. Example: for {@code "foo.bar.com"}
