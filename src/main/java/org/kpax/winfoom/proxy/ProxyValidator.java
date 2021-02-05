@@ -54,6 +54,7 @@ public class ProxyValidator {
             HttpHost proxy = new HttpHost("localhost", proxyConfig.getLocalPort());
             RequestConfig config = RequestConfig.custom()
                     .setProxy(proxy)
+                    .setCircularRedirectsAllowed(true)
                     .build();
             HttpGet request = new HttpGet("/");
             request.setConfig(config);
