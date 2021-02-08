@@ -84,7 +84,7 @@ public class HttpClientBuilderFactory {
                 setDefaultRequestConfig(requestConfig).
                 setRoutePlanner(new DefaultProxyRoutePlanner(requestConfig.getProxy())).
                 disableAutomaticRetries().
-                disableRedirectHandling().
+                //disableRedirectHandling().
                 disableCookieManagement();
     }
 
@@ -101,7 +101,7 @@ public class HttpClientBuilderFactory {
                         .setCircularRedirectsAllowed(true)
                         .build())
                 .disableAutomaticRetries()
-                .disableRedirectHandling()
+                //.disableRedirectHandling()
                 .disableCookieManagement();
     }
 
@@ -119,7 +119,7 @@ public class HttpClientBuilderFactory {
                         .build())
                 .setConnectionManagerShared(true)
                 .disableAutomaticRetries()
-                .disableRedirectHandling()
+                //.disableRedirectHandling()
                 .disableCookieManagement();
     }
 
