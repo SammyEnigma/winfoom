@@ -34,7 +34,7 @@ If it is not already installed on your system, you can download it from [AdoptOp
 on Linux systems, use your package manager.
 
 If, for certain reasons, you do not want to install Java globally on your system then download the JRE archive according
-to your system architecture then unzip it in the Winfoom directory and rename it to `jdk`.
+to your system architecture, unzip it in the Winfoom directory and rename it to `jdk`.
 
 > 👉 Note: For Windows systems there is `winfoom-windows.zip` archive containing only the Windows executable files together with AdoptOpenJDK v11 (the `jdk` directory), therefore you don't need a Java Runtime Environment to be installed on your operating system.
 
