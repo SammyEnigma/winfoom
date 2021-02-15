@@ -23,7 +23,7 @@
     </parent>
     <groupId>org.kpax</groupId>
     <artifactId>winfoom</artifactId>
-    <version>3.2.2</version>
+    <version>3.3.0-SNAPSHOT</version>
 
     <name>winfoom</name>
     <url>https://github.com/ecovaci/winfoom</url>
