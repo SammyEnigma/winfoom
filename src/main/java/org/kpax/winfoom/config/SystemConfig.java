@@ -227,6 +227,7 @@ public class SystemConfig {
                 ", pacScriptEnginePoolMaxTotal=" + pacScriptEnginePoolMaxTotal +
                 ", pacScriptEnginePoolMinIdle=" + pacScriptEnginePoolMinIdle +
                 ", apiServerRequestTimeout=" + apiServerRequestTimeout +
+                ", kerberosLoginMinInterval=" + kerberosLoginMinInterval +
                 '}';
     }
 }
