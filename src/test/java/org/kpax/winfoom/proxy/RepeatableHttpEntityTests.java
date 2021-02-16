@@ -271,7 +271,6 @@ class RepeatableHttpEntityTests {
         }
     }
 
-
     @Test
     void repeatable_NoAvailableData_DoNotUseTempFile() throws IOException {//OK
         this.bufferSize = 1024;
@@ -288,13 +287,9 @@ class RepeatableHttpEntityTests {
         }
     }
 
-
     @AfterAll
     void after() throws IOException {
         serverSocket.close();
-        if (tempDirectory != null) {
-            //InputOutputs.emptyDirectory(tempDirectory.toFile());
-        }
     }
 
 }

@@ -27,6 +27,8 @@ import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * A special type of repeatable {@link AbstractHttpEntity}.
@@ -235,7 +237,14 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
         }
 
         void write(int length) {
-            fileChannel.write(byteBuffer.position(0).limit(length), position);
+            Future<Integer> future = fileChannel.write(byteBuffer.position(0).limit(length), position);
+            try {
+                future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
             position += length;
         }
 
