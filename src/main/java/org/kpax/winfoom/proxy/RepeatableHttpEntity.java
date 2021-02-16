@@ -233,7 +233,7 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
             this.byteBuffer = ByteBuffer.wrap(buffer);
             this.fileChannel = AsynchronousFileChannel.open(tempFilepath,
                     StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE, StandardOpenOption.DSYNC);
+                    StandardOpenOption.CREATE, StandardOpenOption.SYNC);
         }
 
         void write(int length) {
