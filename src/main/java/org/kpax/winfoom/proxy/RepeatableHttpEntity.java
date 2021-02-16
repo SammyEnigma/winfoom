@@ -18,6 +18,7 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.impl.io.ChunkedInputStream;
 import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.kpax.winfoom.annotation.NotThreadSafe;
+import org.kpax.winfoom.config.SystemContext;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.InputOutputs;
 
@@ -233,18 +234,20 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
             this.byteBuffer = ByteBuffer.wrap(buffer);
             this.fileChannel = AsynchronousFileChannel.open(tempFilepath,
                     StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE, StandardOpenOption.SYNC);
+                    StandardOpenOption.CREATE);
         }
 
-        void write(int length) {
+        void write(int length) throws IOException {
             Future<Integer> future = fileChannel.write(byteBuffer.position(0).limit(length), position);
-           /* try {
-                future.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }*/
+            if (!SystemContext.IS_OS_WINDOWS) {
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    throw new IOException(e);
+                } catch (ExecutionException e) {
+                    throw new IOException(e.getCause());
+                }
+            }
             position += length;
         }
 
