@@ -20,12 +20,17 @@ import org.apache.http.impl.client.*;
 import org.apache.http.protocol.*;
 import org.apache.http.util.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kpax.winfoom.*;
 import org.kpax.winfoom.config.*;
 import org.kpax.winfoom.util.*;
 import org.mockito.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.*;
 
 import java.io.*;
@@ -34,12 +39,17 @@ import java.nio.file.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.kpax.winfoom.TestConstants.*;
+import static org.kpax.winfoom.config.SystemContext.WINFOOM_CONFIG_ENV;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Eugen Covaci {@literal eugen.covaci.q@gmail.com}
  * Created on 2/29/2020
  */
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@SpringBootTest(classes = FoomApplicationTest.class)
+@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Timeout(10)
@@ -73,7 +83,7 @@ class RepeatableHttpEntityTests {
         when(proxyConfig.getProxyHost()).thenReturn("localhost");
         when(proxyConfig.getProxyPort()).thenReturn(PROXY_PORT);
 
-        tempDirectory = Paths.get(System.getProperty("user.dir"), "target", "temp");
+        tempDirectory = Paths.get(System.getProperty(WINFOOM_CONFIG_ENV), "temp");
         Files.createDirectories(tempDirectory);
         logger.info("Using temp directory {}", tempDirectory);
 
