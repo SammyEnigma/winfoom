@@ -94,10 +94,14 @@ Winfoom can be launched with modified Java and system parameters by defining the
 
 `FOOM_ARGS=-Dsocket.soTimeout=10 -Dconnection.request.timeout=60`
 
-> 👉 Note: It's a good idea to add the Winfoom's directory to the PATH environment variable.
+> 👉 Note: It's a good idea to add the Winfoom's home directory to the PATH environment variable.
+
+Starting with v3.3.0 it is possible to modify the config directory location by setting the `WINFOOM_CONFIG` environment variable.
+When this variable is not set, the default value would be `WINFOOM_CONFIG=<user.home.directory.path>`. 
+This allows running multiple instances of the application having different configurations.
 
 ## Winfoom's logs
-The application log file is placed under `<user.home.dir>/.winfoom/logs` directory.
+The application log file is placed under `<WINFOOM_CONFIG>/.winfoom/logs` directory.
 
 ## Configuration
 ### User settings
@@ -300,7 +304,7 @@ then check the new settings with `foomcli settings`
 > (For example FOOM_LOCATION=localhost:[your new port])
 
 ### System settings
-The system settings configuration file is `<user.home.dir>/.winfoom/system.properties`.
+The system settings configuration file is `<WINFOOM_CONFIG>/.winfoom/system.properties`.
 
 _Please do not modify this file unless absolutely necessary. It is advisable to post your issue in [Issues Section](https://github.com/ecovaci/winfoom/issues) first._
 
