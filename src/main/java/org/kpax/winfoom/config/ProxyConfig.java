@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -59,7 +58,7 @@ import java.util.*;
         "proxyPacFileLocation", "blacklistTimeout",
         "localPort", "proxyTestUrl", "autostart", "autodetect"})
 @Component
-@PropertySource(value = "file:${user.home}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + ProxyConfig.FILENAME,
+@PropertySource(value = "file:${" + SystemContext.WINFOOM_CONFIG_ENV + "}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + ProxyConfig.FILENAME,
         ignoreResourceNotFound = true)
 public class ProxyConfig {
 
@@ -147,7 +146,7 @@ public class ProxyConfig {
 
     @PostConstruct
     public void init() throws IOException, ConfigurationException {
-        File userProperties = Paths.get(System.getProperty("user.home"), SystemConfig.APP_HOME_DIR_NAME,
+        File userProperties = Paths.get(System.getProperty(SystemContext.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME,
                 ProxyConfig.FILENAME).toFile();
 
         // Make sure the file exists.
@@ -447,7 +446,7 @@ public class ProxyConfig {
             int backslashIndex = proxyHttpUsername.indexOf('\\');
             String username = backslashIndex > -1 ? proxyHttpUsername.substring(backslashIndex + 1) : proxyHttpUsername;
             String domain = backslashIndex > -1 ? proxyHttpUsername.substring(0, backslashIndex) : null;
-            return username  + (StringUtils.isNotBlank(domain) ? "@" + domain.toUpperCase(Locale.ROOT) : "");
+            return username + (StringUtils.isNotBlank(domain) ? "@" + domain.toUpperCase(Locale.ROOT) : "");
         }
         return null;
     }
@@ -519,7 +518,7 @@ public class ProxyConfig {
     }
 
     @Autowired
-    private void setTempDirectory(@Value("${user.home}") String userHome) {
+    private void setTempDirectory(@Value("${" + SystemContext.WINFOOM_CONFIG_ENV + "}") String userHome) {
         tempDirectory = Paths.get(userHome, SystemConfig.APP_HOME_DIR_NAME, "temp");
     }
 
@@ -558,7 +557,7 @@ public class ProxyConfig {
     @PreDestroy
     void save() throws ConfigurationException {
         logger.info("Save proxy settings");
-        File userProperties = Paths.get(System.getProperty("user.home"), SystemConfig.APP_HOME_DIR_NAME,
+        File userProperties = Paths.get(System.getProperty(SystemContext.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME,
                 ProxyConfig.FILENAME).toFile();
         FileBasedConfigurationBuilder<PropertiesConfiguration> propertiesBuilder = new Configurations()
                 .propertiesBuilder(userProperties);

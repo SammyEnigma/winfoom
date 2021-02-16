@@ -75,6 +75,8 @@ public class FoomApplication {
             }
         }
 
+        SystemContext.setEnvironment();
+
         // Check version
         try {
             checkAppVersion();
@@ -83,12 +85,11 @@ public class FoomApplication {
             if (SystemContext.IS_GUI_MODE) {
                 SwingUtils.showErrorMessage(String.format("Failed to verify application version.<br>" +
                                 "Remove the %s directory then try again.",
-                        Paths.get(System.getProperty("user.home"), SystemConfig.APP_HOME_DIR_NAME)));
+                        Paths.get(System.getProperty(SystemContext.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME)));
             }
             System.exit(1);
         }
 
-        SystemContext.setSpringActiveProfiles();
 
         logger.info("Bootstrap Spring's application context");
         try {
@@ -113,7 +114,7 @@ public class FoomApplication {
      */
     private static void checkAppVersion() throws IOException, ConfigurationException {
         logger.info("Check the application's version");
-        Path appHomePath = Paths.get(System.getProperty("user.home"), SystemConfig.APP_HOME_DIR_NAME);
+        Path appHomePath = Paths.get(System.getProperty(SystemContext.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME);
         if (Files.exists(appHomePath)) {
             Path proxyConfigPath = appHomePath.resolve(ProxyConfig.FILENAME);
             if (Files.exists(proxyConfigPath)) {

@@ -30,7 +30,7 @@ import java.net.SocketException;
  * @author Eugen Covaci
  */
 @Component
-@PropertySource(value = "file:${user.home}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + SystemConfig.FILENAME,
+@PropertySource(value = "file:${" + SystemContext.WINFOOM_CONFIG_ENV + "}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + SystemConfig.FILENAME,
         ignoreResourceNotFound = true)
 public class SystemConfig {
 

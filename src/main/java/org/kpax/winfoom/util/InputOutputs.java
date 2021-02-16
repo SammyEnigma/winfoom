@@ -15,6 +15,7 @@ package org.kpax.winfoom.util;
 import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.config.SystemConfig;
+import org.kpax.winfoom.config.SystemContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -153,7 +154,7 @@ public final class InputOutputs {
                                   final CopyOption... options) throws IOException {
         Assert.notNull(path, "path cannot be null");
         if (Files.exists(path)) {
-            Path appHomePath = Paths.get(System.getProperty("user.home"), SystemConfig.APP_HOME_DIR_NAME);
+            Path appHomePath = Paths.get(System.getProperty(SystemContext.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME);
             Path backupDirPath = appHomePath.resolve(SystemConfig.BACKUP_DIR_NAME);
             if (!Files.exists(backupDirPath)) {
                 Files.createDirectories(backupDirPath);

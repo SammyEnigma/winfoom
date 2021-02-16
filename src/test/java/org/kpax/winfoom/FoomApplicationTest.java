@@ -20,21 +20,35 @@ import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.impl.auth.*;
-import org.apache.http.impl.auth.win.WindowsNTLMSchemeFactory;
-import org.apache.http.impl.auth.win.WindowsNegotiateSchemeFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.kpax.winfoom.config.ProxyConfig;
+import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.util.functional.ProxySingletonSupplier;
-import org.kpax.winfoom.util.functional.SingletonSupplier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
+
+import static org.kpax.winfoom.config.SystemContext.WINFOOM_CONFIG_ENV;
+
 @SpringBootApplication
 public class FoomApplicationTest {
 
-    public static void main(String[] args) {
+    static {
+        String relPath = FoomApplicationTest.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        File targetDir = new File(relPath + "../../target");
+        File homeDir = Paths.get(targetDir.getAbsolutePath(), "config", SystemConfig.APP_HOME_DIR_NAME).toFile();
+        if (!homeDir.exists()) {
+            homeDir.mkdirs();
+        }
+        System.setProperty(WINFOOM_CONFIG_ENV, homeDir.getParentFile().getAbsolutePath());
+    }
+
+    public static void main(String[] args) throws MalformedURLException {
         SpringApplication.run(FoomApplicationTest.class, args);
     }
 
@@ -60,5 +74,6 @@ public class FoomApplicationTest {
                         .register(AuthSchemes.KERBEROS, new KerberosSchemeFactory()).build()
         );
     }
+
 
 }

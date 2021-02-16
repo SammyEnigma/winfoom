@@ -13,6 +13,9 @@
 
 package org.kpax.winfoom.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +25,8 @@ import java.util.Optional;
  * Provide information about the current operating system, Spring's active profiles.
  */
 public class SystemContext {
+
+    public static final String WINFOOM_CONFIG_ENV = "WINFOOM_CONFIG";
 
     /**
      * The name of the current operating system.
@@ -47,11 +52,16 @@ public class SystemContext {
      */
     public static final boolean IS_GUI_MODE = PROFILES.contains("gui");
 
+    private static final Logger logger = LoggerFactory.getLogger(SystemContext.class);
+
     /**
-     * Apply {@link #PROFILES}'s content to the {@code spring.profiles.active} environment variable.
+     * Apply {@link #PROFILES}'s content to the {@code spring.profiles.active} system property,
+     * also set config location system property.
      */
-    public static void setSpringActiveProfiles() {
+    public static void setEnvironment() {
         System.setProperty("spring.profiles.active", String.join(",", PROFILES));
+        String configLocation = System.getenv(WINFOOM_CONFIG_ENV);
+        System.setProperty(WINFOOM_CONFIG_ENV, configLocation != null ? configLocation : System.getProperty("user.home"));
     }
 
 }
