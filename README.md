@@ -96,7 +96,7 @@ Winfoom can be launched with modified Java and system parameters by defining the
 
 > 👉 Note: It's a good idea to add the Winfoom's home directory to the PATH environment variable.
 
-Starting with v3.3.0 it is possible to modify the config directory location by setting the `WINFOOM_CONFIG` environment variable.
+Starting with v3.3.0 it is possible to modify the config directory location by setting the `WINFOOM_CONFIG` variable.
 When this variable is not set, the default value would be `WINFOOM_CONFIG=<user.home.directory.path>`. 
 This allows running multiple instances of the application having different configurations.
 
@@ -300,7 +300,7 @@ To load the new values, execute:
 
 then check the new settings with `foomcli settings`
 
-> 👉 Note: If you modify the apiPort then you need to set the environment variable FOOM_LOCATION. 
+> 👉 Note: If you modify the apiPort then you need to set the variable FOOM_LOCATION. 
 > (For example FOOM_LOCATION=localhost:[your new port])
 
 ### System settings
