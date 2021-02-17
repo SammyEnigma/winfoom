@@ -62,6 +62,7 @@ public class SystemContext {
         System.setProperty("spring.profiles.active", String.join(",", PROFILES));
         String configLocation = System.getenv(WINFOOM_CONFIG_ENV);
         System.setProperty(WINFOOM_CONFIG_ENV, configLocation != null ? configLocation : System.getProperty("user.home"));
+        System.out.println("Config location: " + System.getProperty(WINFOOM_CONFIG_ENV));
     }
 
 }
