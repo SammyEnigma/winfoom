@@ -41,7 +41,9 @@ public class SystemContext {
     /**
      * Is the application running in graphical mode?
      */
-    public static final boolean IS_GUI_MODE = Optional.ofNullable(System.getProperty("spring.profiles.active")).map(p -> p.contains("gui")).orElse(false);
+    public static final boolean IS_GUI_MODE = Optional.ofNullable(System.getProperty("spring.profiles.active")).
+            map(s -> List.of(s.split(",")).contains("gui")).
+            orElse(false);
 
     /**
      * Set various system properties.
