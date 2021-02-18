@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kpax.winfoom.TestConstants.LOCAL_PROXY_PORT;
 import static org.mockito.Mockito.when;
 
@@ -133,7 +134,7 @@ public class PacProxyClientConnectionTests {
                 request.setConfig(config);
 
                 try (CloseableHttpResponse response = httpClient.execute(target, request)) {
-                    assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+                    assertTrue(response.getStatusLine().getStatusCode() < 300, "Wrong response: " + response.getStatusLine().getStatusCode());
                     String responseBody = EntityUtils.toString(response.getEntity());
                     assertEquals("12345", responseBody);
                 }
@@ -144,7 +145,7 @@ public class PacProxyClientConnectionTests {
                 HttpHost target = HttpHost.create("http://localhost:" + remoteServer.getLocalPort());
                 HttpRequest request = new BasicHttpRequest("CONNECT", "localhost:" + remoteServer.getLocalPort());
                 try (CloseableHttpResponse response = httpClient.execute(target, request)) {
-                    assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+                    assertTrue(response.getStatusLine().getStatusCode() < 300, "Wrong CONNECT response: " + response.getStatusLine().getStatusCode());
                 }
             }
 
