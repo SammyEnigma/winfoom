@@ -39,27 +39,15 @@ public class SystemContext {
     public static final boolean IS_OS_WINDOWS = OS_NAME.toLowerCase(Locale.ROOT).startsWith("windows");
 
     /**
-     * The list of provided Spring active profiles with the {@code windows} profile appended
-     * if the current operating system is Windows.
-     */
-    public static final List<String> PROFILES =
-            Optional.ofNullable(System.getProperty("spring.profiles.active")).
-                    map(s -> List.of((s + (IS_OS_WINDOWS ? ",windows" : "")).split(","))).
-                    orElse(IS_OS_WINDOWS ? Collections.singletonList("windows") : Collections.emptyList());
-
-    /**
      * Is the application running in graphical mode?
      */
-    public static final boolean IS_GUI_MODE = PROFILES.contains("gui");
-
-    private static final Logger logger = LoggerFactory.getLogger(SystemContext.class);
+    public static final boolean IS_GUI_MODE = Optional.ofNullable(System.getProperty("spring.profiles.active")).map(p -> p.contains("gui")).orElse(false);
 
     /**
-     * Apply {@link #PROFILES}'s content to the {@code spring.profiles.active} system property,
-     * also set config location system property.
+     * Set various system properties.
+     * <p>Currently, only config location is set.
      */
     public static void setEnvironment() {
-        System.setProperty("spring.profiles.active", String.join(",", PROFILES));
         String configLocation = System.getenv(WINFOOM_CONFIG_ENV);
         System.setProperty(WINFOOM_CONFIG_ENV, configLocation != null ? configLocation : System.getProperty("user.home"));
         System.out.println("Config location: " + System.getProperty(WINFOOM_CONFIG_ENV));
