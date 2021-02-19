@@ -42,7 +42,7 @@ class AuthConfiguration {
      */
     @Bean
     public ProxySingletonSupplier<CredentialsProvider> credentialsProviderSupplier(ProxyConfig proxyConfig) {
-        return new ProxySingletonSupplier<CredentialsProvider>(
+        return new ProxySingletonSupplier<>(
                 () -> proxyConfig.isAuthAutoMode() ?
                         new WindowsCredentialsProvider(new SystemDefaultCredentialsProvider()) :
                         new NonWindowsCredentialsProvider(proxyConfig));
@@ -56,7 +56,7 @@ class AuthConfiguration {
      */
     @Bean
     public ProxySingletonSupplier<Registry<AuthSchemeProvider>> authSchemeRegistrySupplier(ProxyConfig proxyConfig) {
-        return new ProxySingletonSupplier<Registry<AuthSchemeProvider>>(() -> {
+        return new ProxySingletonSupplier<>(() -> {
             RegistryBuilder<AuthSchemeProvider> register = RegistryBuilder.<AuthSchemeProvider>create()
                     .register(AuthSchemes.BASIC, new BasicSchemeFactory())
                     .register(AuthSchemes.DIGEST, new DigestSchemeFactory())

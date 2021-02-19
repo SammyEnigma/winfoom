@@ -250,9 +250,7 @@ public class AppFrame extends JFrame {
         if (proxyTypeCombo == null) {
             proxyTypeCombo = new JComboBox<>(ProxyConfig.Type.values());
             proxyTypeCombo.setMinimumSize(new Dimension(80, 35));
-            proxyTypeCombo.addActionListener((e) -> {
-                configureContent();
-            });
+            proxyTypeCombo.addActionListener((e) -> configureContent());
         }
         return proxyTypeCombo;
     }
@@ -260,9 +258,7 @@ public class AppFrame extends JFrame {
     private JComboBox<ProxyConfig.HttpAuthProtocol> getAuthProtocolCombo() {
         JComboBox<ProxyConfig.HttpAuthProtocol> comboBox = new JComboBox<>(ProxyConfig.HttpAuthProtocol.values());
         comboBox.setSelectedItem(proxyConfig.getHttpAuthProtocol());
-        comboBox.addActionListener((e) -> {
-            proxyConfig.setHttpAuthProtocol((ProxyConfig.HttpAuthProtocol) comboBox.getSelectedItem());
-        });
+        comboBox.addActionListener((e) -> proxyConfig.setHttpAuthProtocol((ProxyConfig.HttpAuthProtocol) comboBox.getSelectedItem()));
         return comboBox;
     }
 
