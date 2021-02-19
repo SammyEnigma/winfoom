@@ -133,7 +133,7 @@ public class PacScriptEvaluator implements ProxyListener {
                 config.setTestOnReturn(false);
                 config.setBlockWhenExhausted(true);
                 return new GenericObjectPool<>(
-                        new BasePooledObjectFactory<>() {
+                        new BasePooledObjectFactory<GraalJSScriptEngine>() {
                             @Override
                             public GraalJSScriptEngine create() throws PacFileException, IOException {
                                 return createScriptEngine();
