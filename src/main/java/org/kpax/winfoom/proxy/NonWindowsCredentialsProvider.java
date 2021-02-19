@@ -20,6 +20,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.proxy.listener.StopListener;
+import org.kpax.winfoom.util.DomainUser;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,9 @@ public class NonWindowsCredentialsProvider implements CredentialsProvider, StopL
         if (proxyConfig.isKerberos()) {
             return new NoCredentials();
         } else if (proxyConfig.isNtlm()) {
-            int backslashIndex = proxyConfig.getProxyHttpUsername().indexOf('\\');
-            String username = backslashIndex > -1 ?
-                    proxyConfig.getProxyHttpUsername().substring(backslashIndex + 1) : proxyConfig.getProxyHttpUsername();
-            String domain = backslashIndex > -1 ?
-                    proxyConfig.getProxyHttpUsername().substring(0, backslashIndex) : null;
-            logger.debug("Create NTLM credentials using username={}, domain={}", username, domain);
-            return new NTCredentials(username, proxyConfig.getProxyHttpPassword(), null, domain);
+            DomainUser domainUser = new DomainUser(proxyConfig.getProxyHttpUsername());
+            logger.debug("Create NTLM credentials using domainUser {}", domainUser);
+            return new NTCredentials(domainUser.getUsername(), proxyConfig.getProxyHttpPassword(), null, domainUser.getDomain());
         } else {
             return new UsernamePasswordCredentials(proxyConfig.getProxyHttpUsername(),
                     proxyConfig.getProxyHttpPassword());

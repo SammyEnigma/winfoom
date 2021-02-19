@@ -25,6 +25,7 @@ import org.kpax.winfoom.api.json.Asterisk;
 import org.kpax.winfoom.api.json.Views;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
 import org.kpax.winfoom.proxy.ProxyType;
+import org.kpax.winfoom.util.DomainUser;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.jna.IEProxyConfig;
 import org.kpax.winfoom.util.jna.WinHttpHelpers;
@@ -443,10 +444,9 @@ public class ProxyConfig {
 
     public String getProxyKrbPrincipal() {
         if (proxyHttpUsername != null) {
-            int backslashIndex = proxyHttpUsername.indexOf('\\');
-            String username = backslashIndex > -1 ? proxyHttpUsername.substring(backslashIndex + 1) : proxyHttpUsername;
-            String domain = backslashIndex > -1 ? proxyHttpUsername.substring(0, backslashIndex) : null;
-            return username + (StringUtils.isNotBlank(domain) ? "@" + domain.toUpperCase(Locale.ROOT) : "");
+            DomainUser domainUser = new DomainUser(proxyHttpUsername);
+            return domainUser.getUsername() +
+                    (StringUtils.isNotBlank(domainUser.getDomain()) ? "@" + domainUser.getDomain() : "");
         }
         return null;
     }
