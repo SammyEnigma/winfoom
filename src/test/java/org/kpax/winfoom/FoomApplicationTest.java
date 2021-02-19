@@ -33,7 +33,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 
-import static org.kpax.winfoom.config.SystemContext.WINFOOM_CONFIG_ENV;
+import static org.kpax.winfoom.config.SystemConfig.WINFOOM_CONFIG_ENV;
 
 @SpringBootApplication
 public class FoomApplicationTest {

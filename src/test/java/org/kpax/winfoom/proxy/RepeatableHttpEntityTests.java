@@ -39,7 +39,7 @@ import java.nio.file.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.kpax.winfoom.TestConstants.*;
-import static org.kpax.winfoom.config.SystemContext.WINFOOM_CONFIG_ENV;
+import static org.kpax.winfoom.config.SystemConfig.WINFOOM_CONFIG_ENV;
 import static org.mockito.Mockito.*;
 
 /**

@@ -22,8 +22,6 @@ import java.util.Optional;
  */
 public class SystemContext {
 
-    public static final String WINFOOM_CONFIG_ENV = "WINFOOM_CONFIG";
-
     /**
      * The name of the current operating system.
      */
@@ -46,9 +44,9 @@ public class SystemContext {
      * <p>Currently, only config location is set.
      */
     public static void setEnvironment() {
-        String configLocation = System.getenv(WINFOOM_CONFIG_ENV);
-        System.setProperty(WINFOOM_CONFIG_ENV, configLocation != null ? configLocation : System.getProperty("user.home"));
-        System.out.println("Config location: " + System.getProperty(WINFOOM_CONFIG_ENV));
+        String configLocation = System.getenv(SystemConfig.WINFOOM_CONFIG_ENV);
+        System.setProperty(SystemConfig.WINFOOM_CONFIG_ENV, configLocation != null ? configLocation : System.getProperty("user.home"));
+        System.out.println("Config location: " + System.getProperty(SystemConfig.WINFOOM_CONFIG_ENV));
     }
 
 }

@@ -30,7 +30,7 @@ import java.net.SocketException;
  * @author Eugen Covaci
  */
 @Component
-@PropertySource(value = "file:${" + SystemContext.WINFOOM_CONFIG_ENV + "}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + SystemConfig.FILENAME,
+@PropertySource(value = "file:${" + SystemConfig.WINFOOM_CONFIG_ENV + "}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + SystemConfig.FILENAME,
         ignoreResourceNotFound = true)
 public class SystemConfig {
 
@@ -39,6 +39,7 @@ public class SystemConfig {
     public static final String APP_HOME_DIR_NAME = ".winfoom";
 
     public static final String BACKUP_DIR_NAME = "backup";
+    public static final String WINFOOM_CONFIG_ENV = "WINFOOM_CONFIG";
 
     private final Logger logger = LoggerFactory.getLogger(SystemConfig.class);
 
