@@ -442,7 +442,7 @@ public class ProxyConfig {
 
     public String getProxyKrbPrincipal() {
         if (proxyHttpUsername != null) {
-            DomainUser domainUser = new DomainUser(proxyHttpUsername);
+            DomainUser domainUser = DomainUser.from(proxyHttpUsername);
             return domainUser.getUsername() +
                     (StringUtils.isNotBlank(domainUser.getDomain()) ? "@" + domainUser.getDomain() : "");
         }

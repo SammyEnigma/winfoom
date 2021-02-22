@@ -99,7 +99,6 @@ public class GenericHttpRequestHandler implements HttpRequestHandler {
                 logger.debug("Error on executing request", e);
                 response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 response.setEntity(new StringEntity("Error on executing command: " + e.getMessage()));
-
             } catch (TimeoutException e) {
                 logger.debug("Request timeout", e);
                 response.setStatusCode(HttpStatus.SC_REQUEST_TIMEOUT);

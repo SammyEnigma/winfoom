@@ -14,6 +14,7 @@ package org.kpax.winfoom.pac;
 
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
+import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class GlobPatternMatcher {
      * @return the {@link Pattern} instance.
      * @see #convertGlobToRegEx(String)
      */
-    public Pattern toPattern(String glob) {
+    public Pattern toPattern(@NotNull String glob) {
         Assert.notNull(glob, "glob cannot be null");
         Pattern pattern = globPatternCacheSupplier.get().get(glob);
         if (pattern == null) {
@@ -79,7 +80,7 @@ public class GlobPatternMatcher {
      * @param globExpression the GLOB expression.
      * @return the regex
      */
-    public static String convertGlobToRegEx(String globExpression) {
+    public static String convertGlobToRegEx(@NotNull String globExpression) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("^");
         for (int i = 0; i < globExpression.length(); ++i) {

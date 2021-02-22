@@ -9,12 +9,9 @@ public final class DomainUser {
     private final String username;
     private final String domain;
 
-    public DomainUser(@NotNull String domainUsername) {
-        int backslashIndex = domainUsername.indexOf('\\');
-        this.username = backslashIndex > -1 ?
-                domainUsername.substring(backslashIndex + 1) : domainUsername;
-        this.domain = backslashIndex > -1 ?
-                domainUsername.substring(0, backslashIndex).toUpperCase(Locale.ROOT) : null;
+    public DomainUser(String username, String domain) {
+        this.username = username;
+        this.domain = domain;
     }
 
     public String getUsername() {
@@ -23,6 +20,14 @@ public final class DomainUser {
 
     public String getDomain() {
         return domain;
+    }
+
+    public static DomainUser from (@NotNull String domainUsername) {
+        int backslashIndex = domainUsername.indexOf('\\');
+        return new DomainUser(backslashIndex > -1 ?
+                domainUsername.substring(backslashIndex + 1) : domainUsername,
+                backslashIndex > -1 ?
+                        domainUsername.substring(0, backslashIndex).toUpperCase(Locale.ROOT) : null);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class NonWindowsCredentialsProvider implements CredentialsProvider, StopL
         if (proxyConfig.isKerberos()) {
             return new NoCredentials();
         } else if (proxyConfig.isNtlm()) {
-            DomainUser domainUser = new DomainUser(proxyConfig.getProxyHttpUsername());
+            DomainUser domainUser = DomainUser.from(proxyConfig.getProxyHttpUsername());
             logger.debug("Create NTLM credentials using domainUser {}", domainUser);
             return new NTCredentials(domainUser.getUsername(), proxyConfig.getProxyHttpPassword(), null, domainUser.getDomain());
         } else {
