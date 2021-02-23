@@ -12,7 +12,7 @@ public class JsonUtils {
     private JsonUtils() {
     }
 
-    public static Iterator<String> getFieldNames (@NotNull String json) throws JsonProcessingException {
+    public static Iterator<String> getFieldNames(@NotNull String json) throws JsonProcessingException {
         Assert.notNull(json, "json cannot be null");
         JsonNode tree = new ObjectMapper().readTree(json);
         return tree.fieldNames();

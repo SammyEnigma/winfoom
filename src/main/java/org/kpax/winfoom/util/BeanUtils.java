@@ -27,7 +27,7 @@ public class BeanUtils {
     public static void copyNonNullProperties(Iterator<String> fieldNamesItr, Object src, Object dest)
             throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Map<String, Object> objectMap = PropertyUtils.describe(src);
-        for (; fieldNamesItr.hasNext();) {
+        for (; fieldNamesItr.hasNext(); ) {
             String fieldName = fieldNamesItr.next();
             if (objectMap.containsKey(fieldName)) {
                 Object fieldValue = objectMap.get(fieldName);
