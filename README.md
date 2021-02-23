@@ -332,6 +332,13 @@ The available settings:
   unless you uncheck the `Use system credentials` checkbox. 
   On Linux/Macos or on Windows with `Use system credentials` unchecked you need to provide the user and password (or DOMAIN\user and password if the DOMAIN is required) 
 * For SOCKS5 proxy type, the user/password need to be provided when required.
+* For PAC proxy type, starting with v3.4.0, there is some support for authentication 
+  (still, keep in mind that the PAC protocol does not support authentication) when:
+  1. All upstream proxy servers accept the same credentials.
+  2. On Windows, if the `proxyUsername` field is empty, the current user's credentials are used for authentication.
+  3. On Unix based systems, if the `proxyUsername` field is empty the authentication is disabled. 
+  4. On all systems, when the `proxyUsername` field is not empty, the provided `proxyUsername`/`proxyPassword` are used for authentication.
+     If at least one of the upstream proxy servers is of HTTP type, the field `pacHttpAuthProtocol` needs to be provided.
 
 ### Error codes
 Starting with v2.6.0 Winfoom gives back the following HTTP error codes when there is no response from the remote proxy for various reasons:

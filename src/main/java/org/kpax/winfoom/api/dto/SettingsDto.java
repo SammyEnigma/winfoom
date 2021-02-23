@@ -13,11 +13,8 @@
 
 package org.kpax.winfoom.api.dto;
 
-import org.kpax.winfoom.config.ProxyConfig;
-import org.kpax.winfoom.config.SystemContext;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
 import org.kpax.winfoom.util.HttpUtils;
-import org.springframework.util.Assert;
 
 /**
  * The settings DTO for API server.

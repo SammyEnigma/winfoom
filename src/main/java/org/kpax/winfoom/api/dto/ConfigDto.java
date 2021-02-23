@@ -137,7 +137,7 @@ public class ConfigDto {
     public void validate() throws InvalidProxySettingsException {
         if (proxyHost != null || proxyPort != null || useCurrentCredentials != null) {
             Assert.state(proxyType != null, "proxyType must be specified when proxyHost or proxyPort or useCurrentCredentials are provided");
-            Assert.state(proxyType != ProxyConfig.Type.DIRECT, "When proxyType is DIRECT, neither proxyHost nor proxyPort can be provided");
+            Assert.state(proxyType != ProxyConfig.Type.DIRECT, "When proxyType is DIRECT, none of proxyHost, proxyPort or useCurrentCredentials can be provided");
         }
 
         if (proxyPort != null) {
@@ -152,8 +152,6 @@ public class ConfigDto {
             }
         }
 
-
-
         if (useCurrentCredentials != null) {
             Assert.state(proxyType == ProxyConfig.Type.HTTP, "proxyType must be HTTP when useCurrentCredentials is provided");
             if (useCurrentCredentials && !SystemContext.IS_OS_WINDOWS) {
@@ -164,7 +162,7 @@ public class ConfigDto {
 
     @Override
     public String toString() {
-        return "ProxyConfigDto{" +
+        return "ConfigDto{" +
                 "proxyType=" + proxyType +
                 ", useCurrentCredentials=" + useCurrentCredentials +
                 ", proxyUsername='" + proxyUsername + '\'' +
@@ -176,6 +174,7 @@ public class ConfigDto {
                 ", localPort=" + localPort +
                 ", proxyTestUrl='" + proxyTestUrl + '\'' +
                 ", httpAuthProtocol=" + httpAuthProtocol +
+                ", pacHttpAuthProtocol=" + pacHttpAuthProtocol +
                 '}';
     }
 }
