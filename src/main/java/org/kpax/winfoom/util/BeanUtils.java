@@ -24,15 +24,15 @@ import java.util.Map;
 public class BeanUtils {
     private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
-    public static void copyNonNullProperties(Iterator<String> fieldNamesItr, Object src, Object dest)
+    public static void copyProperties(Iterator<String> fieldNamesItr, Object source, Object destination)
             throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        Map<String, Object> objectMap = PropertyUtils.describe(src);
+        Map<String, Object> objectMap = PropertyUtils.describe(source);
         for (; fieldNamesItr.hasNext(); ) {
             String fieldName = fieldNamesItr.next();
             if (objectMap.containsKey(fieldName)) {
                 Object fieldValue = objectMap.get(fieldName);
                 logger.debug("Set property: {}={}", fieldName, fieldValue);
-                PropertyUtils.setProperty(dest, fieldName, fieldValue);
+                PropertyUtils.setProperty(destination, fieldName, fieldValue);
             } else {
                 throw new IllegalArgumentException("The source object does not contain the field [" + fieldName + "] ");
             }

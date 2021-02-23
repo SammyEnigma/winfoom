@@ -25,7 +25,8 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.HttpContext;
 import org.kpax.winfoom.api.auth.ApiCredentials;
-import org.kpax.winfoom.api.dto.ProxyConfigDto;
+import org.kpax.winfoom.api.dto.ConfigDto;
+import org.kpax.winfoom.api.dto.SettingsDto;
 import org.kpax.winfoom.api.json.Views;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.config.SystemConfig;
@@ -204,9 +205,9 @@ public class ApiController implements AutoCloseable {
                                         BasicHttpEntityEnclosingRequest entityEnclosingRequest = (BasicHttpEntityEnclosingRequest) request;
                                         try {
                                             String json = IOUtils.toString(entityEnclosingRequest.getEntity().getContent(), StandardCharsets.UTF_8);
-                                            ProxyConfigDto proxyConfigDto = new ObjectMapper().readValue(json, ProxyConfigDto.class);
-                                            proxyConfigDto.validate();
-                                            BeanUtils.copyNonNullProperties(JsonUtils.getFieldNames(json), proxyConfigDto, proxyConfig);
+                                            ConfigDto configDto = new ObjectMapper().readValue(json, ConfigDto.class);
+                                            configDto.validate();
+                                            BeanUtils.copyProperties(JsonUtils.getFieldNames(json), configDto, proxyConfig);
                                             response.setEntity(new StringEntity("Proxy configuration changed"));
                                         } catch (IOException e) {
                                             logger.error("Error on parsing JSON", e);
@@ -254,9 +255,9 @@ public class ApiController implements AutoCloseable {
                                         BasicHttpEntityEnclosingRequest entityEnclosingRequest = (BasicHttpEntityEnclosingRequest) request;
                                         try {
                                             String json = IOUtils.toString(entityEnclosingRequest.getEntity().getContent(), StandardCharsets.UTF_8);
-                                            ProxyConfigDto proxyConfigDto = new ObjectMapper().readValue(json, ProxyConfigDto.class);
-                                            proxyConfigDto.validate();
-                                            BeanUtils.copyNonNullProperties(JsonUtils.getFieldNames(json), proxyConfigDto, proxyConfig);
+                                            SettingsDto settingsDto = new ObjectMapper().readValue(json, SettingsDto.class);
+                                            settingsDto.validate();
+                                            BeanUtils.copyProperties(JsonUtils.getFieldNames(json), settingsDto, proxyConfig);
                                             response.setEntity(new StringEntity("Proxy settings changed"));
                                         } catch (IOException e) {
                                             logger.error("Error on parsing JSON", e);

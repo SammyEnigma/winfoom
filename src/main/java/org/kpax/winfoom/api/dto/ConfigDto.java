@@ -20,9 +20,9 @@ import org.kpax.winfoom.util.HttpUtils;
 import org.springframework.util.Assert;
 
 /**
- * The DTO for API server.
+ * The config DTO for API server.
  */
-public class ProxyConfigDto {
+public class ConfigDto {
 
     private ProxyConfig.Type proxyType;
     private Boolean useCurrentCredentials;
@@ -37,10 +37,6 @@ public class ProxyConfigDto {
 
     private ProxyConfig.HttpAuthProtocol httpAuthProtocol;
     private ProxyConfig.HttpAuthProtocol pacHttpAuthProtocol;
-
-    private Integer apiPort;
-    private Boolean autodetect;
-    private Boolean autostart;
 
     public ProxyConfig.Type getProxyType() {
         return proxyType;
@@ -72,14 +68,6 @@ public class ProxyConfigDto {
 
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
-    }
-
-    public Integer getApiPort() {
-        return apiPort;
-    }
-
-    public void setApiPort(Integer apiPort) {
-        this.apiPort = apiPort;
     }
 
     public String getProxyTestUrl() {
@@ -130,22 +118,6 @@ public class ProxyConfigDto {
         this.proxyPort = proxyPort;
     }
 
-    public Boolean getAutodetect() {
-        return autodetect;
-    }
-
-    public void setAutodetect(Boolean autodetect) {
-        this.autodetect = autodetect;
-    }
-
-    public Boolean getAutostart() {
-        return autostart;
-    }
-
-    public void setAutostart(Boolean autostart) {
-        this.autostart = autostart;
-    }
-
     public ProxyConfig.HttpAuthProtocol getHttpAuthProtocol() {
         return httpAuthProtocol;
     }
@@ -180,11 +152,7 @@ public class ProxyConfigDto {
             }
         }
 
-        if (apiPort != null) {
-            if (!HttpUtils.isValidPort(apiPort)) {
-                throw new InvalidProxySettingsException("Invalid apiPort, allowed range: 1 - 65535");
-            }
-        }
+
 
         if (useCurrentCredentials != null) {
             Assert.state(proxyType == ProxyConfig.Type.HTTP, "proxyType must be HTTP when useCurrentCredentials is provided");
@@ -208,9 +176,6 @@ public class ProxyConfigDto {
                 ", localPort=" + localPort +
                 ", proxyTestUrl='" + proxyTestUrl + '\'' +
                 ", httpAuthProtocol=" + httpAuthProtocol +
-                ", apiPort=" + apiPort +
-                ", autodetect=" + autodetect +
-                ", autostart=" + autostart +
                 '}';
     }
 }
