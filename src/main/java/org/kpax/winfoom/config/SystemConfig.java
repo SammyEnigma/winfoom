@@ -110,10 +110,16 @@ public class SystemConfig {
     private boolean preferIPv6Addresses;
 
     /**
-     * The cache2k default capacity.
+     * The cache2k globPattern capacity.
      */
     @Value("${cache.globPattern.capacity:100}")
     private Integer cacheGlobPatternCapacity;
+
+    /**
+     * The cache2k credentialsProvider capacity.
+     */
+    @Value("${cache.credentialsProvider.capacity:100}")
+    private Integer cacheCredentialsProviderCapacity;
 
     /**
      * The pacScriptEngine pool maximum total instances.
@@ -182,6 +188,10 @@ public class SystemConfig {
 
     public Integer getCacheGlobPatternCapacity() {
         return cacheGlobPatternCapacity;
+    }
+
+    public Integer getCacheCredentialsProviderCapacity() {
+        return cacheCredentialsProviderCapacity;
     }
 
     public Integer getPacScriptEnginePoolMaxTotal() {

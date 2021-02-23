@@ -36,6 +36,7 @@ public class ProxyConfigDto {
     private String proxyTestUrl;
 
     private ProxyConfig.HttpAuthProtocol httpAuthProtocol;
+    private ProxyConfig.HttpAuthProtocol pacHttpAuthProtocol;
 
     private Integer apiPort;
     private Boolean autodetect;
@@ -151,6 +152,14 @@ public class ProxyConfigDto {
 
     public void setHttpAuthProtocol(ProxyConfig.HttpAuthProtocol httpAuthProtocol) {
         this.httpAuthProtocol = httpAuthProtocol;
+    }
+
+    public ProxyConfig.HttpAuthProtocol getPacHttpAuthProtocol() {
+        return pacHttpAuthProtocol;
+    }
+
+    public void setPacHttpAuthProtocol(ProxyConfig.HttpAuthProtocol pacHttpAuthProtocol) {
+        this.pacHttpAuthProtocol = pacHttpAuthProtocol;
     }
 
     public void validate() throws InvalidProxySettingsException {

@@ -131,6 +131,15 @@ public class ProxyConfig {
     @Value("${blacklist.timeout:30}")// minutes
     private Integer blacklistTimeout;
 
+    @Value("${proxy.pac.username:#{null}}")
+    private String proxyPacUsername;
+
+    @Value("${proxy.pac.password:#{null}}")
+    private String proxyPacPassword;
+
+    @Value("${pac.http.auth.protocol:#{null}}")
+    private HttpAuthProtocol pacHttpAuthProtocol;
+
     @Value("${autostart:false}")
     private boolean autostart;
 
@@ -187,7 +196,7 @@ public class ProxyConfig {
             if (!HttpUtils.isValidPort(getProxyPort())) {
                 throw new InvalidProxySettingsException("Invalid proxy port");
             }
-            if (proxyType.isHttp() && !(SystemContext.IS_OS_WINDOWS && useCurrentCredentials)) {
+            if (proxyType.isHttp() && !isHttpAuthAutoMode()) {
                 if (httpAuthProtocol == null) {
                     throw new InvalidProxySettingsException("Missing HTTP proxy authentication protocol");
                 }
@@ -224,6 +233,28 @@ public class ProxyConfig {
         } else if (proxyType.isPac()) {
             if (StringUtils.isEmpty(proxyPacFileLocation)) {
                 throw new InvalidProxySettingsException("Missing PAC file location");
+            }
+            if (!isPacAuthAutoMode() && !isPacAuthDisabledMode()) {
+                int backslashIndex = proxyPacUsername.indexOf('\\');
+
+                if (pacHttpAuthProtocol != null && pacHttpAuthProtocol.isKerberos() && backslashIndex < 0) {
+                    throw new InvalidProxySettingsException("The proxy username is invalid: should contain the domain in the form DOMAIN\\username");
+                }
+
+                // Check whether it begins or ends with '\' character
+                if (backslashIndex == 0 ||
+                        backslashIndex == proxyPacUsername.length() - 1) {
+                    throw new InvalidProxySettingsException("The proxy username is invalid");
+                }
+
+                if (pacHttpAuthProtocol != null && pacHttpAuthProtocol.isKerberos()) {
+                    Path krb5ConfPath = Paths.get(krb5ConfFilepath);
+                    if (!Files.exists(krb5ConfPath)) {
+                        throw new InvalidProxySettingsException("File not found: " + krb5ConfFilepath);
+                    } else if (!Files.isReadable(krb5ConfPath)) {
+                        throw new InvalidProxySettingsException("File not readable: " + krb5ConfFilepath);
+                    }
+                }
             }
         }
     }
@@ -370,13 +401,15 @@ public class ProxyConfig {
         this.proxyType = proxyType;
     }
 
-    @JsonView(value = {Views.Socks5.class, Views.HttpNonWindows.class, Views.HttpWindowsManual.class})
+    @JsonView(value = {Views.Socks5.class, Views.Pac.class, Views.HttpNonWindows.class, Views.HttpWindowsManual.class})
     public String getProxyUsername() {
         switch (proxyType) {
             case HTTP:
                 return proxyHttpUsername;
             case SOCKS5:
                 return proxySocks5Username;
+            case PAC:
+                return proxyPacUsername;
         }
         return null;
     }
@@ -389,17 +422,22 @@ public class ProxyConfig {
             case SOCKS5:
                 proxySocks5Username = proxyUsername;
                 break;
+            case PAC:
+                proxyPacUsername = proxyUsername;
+                break;
         }
     }
 
     @Asterisk
-    @JsonView(value = {Views.Socks5.class, Views.HttpNonWindows.class, Views.HttpWindowsManual.class})
+    @JsonView(value = {Views.Socks5.class, Views.Pac.class, Views.HttpNonWindows.class, Views.HttpWindowsManual.class})
     public String getProxyPassword() {
         switch (proxyType) {
             case HTTP:
                 return proxyHttpPassword;
             case SOCKS5:
                 return proxySocks5Password;
+            case PAC:
+                return proxyPacPassword;
         }
         return null;
     }
@@ -411,6 +449,9 @@ public class ProxyConfig {
                 break;
             case SOCKS5:
                 proxySocks5Password = proxyPassword;
+                break;
+            case PAC:
+                proxyPacPassword = proxyPassword;
                 break;
         }
     }
@@ -427,13 +468,46 @@ public class ProxyConfig {
         return proxyHttpUsername;
     }
 
+    public String getProxyPacUsername() {
+        return proxyPacUsername;
+    }
+
+    public String getProxyPacPassword() {
+        return proxyPacPassword;
+    }
+
+    @JsonView(value = {Views.Pac.class})
+    public HttpAuthProtocol getPacHttpAuthProtocol() {
+        return pacHttpAuthProtocol;
+    }
+
+    public void setPacHttpAuthProtocol(HttpAuthProtocol pacHttpAuthProtocol) {
+        this.pacHttpAuthProtocol = pacHttpAuthProtocol;
+    }
+
     @JsonView(value = {Views.HttpWindows.class})
     public boolean isUseCurrentCredentials() {
         return useCurrentCredentials;
     }
 
+    public boolean isHttpAuthAutoMode() {
+        return SystemContext.IS_OS_WINDOWS && proxyType.isHttp() && useCurrentCredentials;
+    }
+
+    public boolean isPacAuthAutoMode() {
+        return SystemContext.IS_OS_WINDOWS && proxyType.isPac() && StringUtils.isEmpty(proxyPacUsername);
+    }
+
+    public boolean isPacAuthManualMode() {
+        return proxyType.isPac() && !StringUtils.isEmpty(proxyPacUsername);
+    }
+
     public boolean isAuthAutoMode() {
-        return SystemContext.IS_OS_WINDOWS && useCurrentCredentials;
+        return isHttpAuthAutoMode() || isPacAuthAutoMode();
+    }
+
+    public boolean isPacAuthDisabledMode() {
+        return proxyType.isPac() && !SystemContext.IS_OS_WINDOWS && StringUtils.isEmpty(proxyPacUsername);
     }
 
     public void setUseCurrentCredentials(boolean useCurrentCredentials) {
@@ -441,8 +515,9 @@ public class ProxyConfig {
     }
 
     public String getProxyKrbPrincipal() {
-        if (proxyHttpUsername != null) {
-            DomainUser domainUser = DomainUser.from(proxyHttpUsername);
+        String username = getProxyUsername();
+        if (username != null) {
+            DomainUser domainUser = DomainUser.from(username);
             return domainUser.getUsername() +
                     (StringUtils.isNotBlank(domainUser.getDomain()) ? "@" + domainUser.getDomain() : "");
         }
@@ -507,12 +582,14 @@ public class ProxyConfig {
 
     public boolean isKerberos() {
         return !isAuthAutoMode() &&
-                proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isKerberos();
+                ((proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isKerberos()) ||
+                        (proxyType.isPac() && pacHttpAuthProtocol != null && pacHttpAuthProtocol.isKerberos()));
     }
 
     public boolean isNtlm() {
         return !isAuthAutoMode() &&
-                proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isNtlm();
+                ((proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isNtlm()) ||
+                        (proxyType.isPac() && pacHttpAuthProtocol != null && pacHttpAuthProtocol.isNtlm()));
     }
 
     @Autowired
@@ -588,7 +665,15 @@ public class ProxyConfig {
         }
 
         setProperty(config, "proxy.pac.fileLocation", proxyPacFileLocation);
+        setProperty(config, "proxy.pac.username", proxyPacUsername);
+        if (StringUtils.isNotEmpty(proxyPacPassword)) {
+            setProperty(config, "proxy.pac.password", "encoded(" + Base64.getEncoder().encodeToString(proxyPacPassword.getBytes()) + ")");
+        } else {
+            config.clearProperty("proxy.pac.password");
+        }
+        setProperty(config, "pac.http.auth.protocol", pacHttpAuthProtocol);
         setProperty(config, "blacklist.timeout", blacklistTimeout);
+
         setProperty(config, "http.auth.protocol", httpAuthProtocol);
         setProperty(config, "autostart", autostart);
         setProperty(config, "autodetect", autodetect);
@@ -651,6 +736,8 @@ public class ProxyConfig {
                 ", useCurrentCredentials=" + useCurrentCredentials +
                 ", proxyPacFileLocation='" + proxyPacFileLocation + '\'' +
                 ", blacklistTimeout=" + blacklistTimeout +
+                ", proxyPacUsername='" + proxyPacUsername + '\'' +
+                ", pacHttpAuthProtocol=" + pacHttpAuthProtocol +
                 ", autostart=" + autostart +
                 ", autodetect=" + autodetect +
                 ", httpAuthProtocol=" + httpAuthProtocol +

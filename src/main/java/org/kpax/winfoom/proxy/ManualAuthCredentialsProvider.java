@@ -28,27 +28,29 @@ import org.slf4j.LoggerFactory;
 import java.security.Principal;
 
 /**
- * The {@link CredentialsProvider} for non Windows systems.
+ * The {@link CredentialsProvider} for manual authentication.
  */
-public class NonWindowsCredentialsProvider implements CredentialsProvider, StopListener {
+public class ManualAuthCredentialsProvider implements CredentialsProvider, StopListener {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private ProxyConfig proxyConfig;
 
     private final SingletonSupplier<Credentials> credentialsSupplier = new SingletonSupplier<>(() -> {
         if (proxyConfig.isKerberos()) {
+            logger.debug("No credentials for Kerberos");
             return new NoCredentials();
         } else if (proxyConfig.isNtlm()) {
-            DomainUser domainUser = DomainUser.from(proxyConfig.getProxyHttpUsername());
+            DomainUser domainUser = DomainUser.from(proxyConfig.getProxyUsername());
             logger.debug("Create NTLM credentials using domainUser {}", domainUser);
-            return new NTCredentials(domainUser.getUsername(), proxyConfig.getProxyHttpPassword(), null, domainUser.getDomain());
+            return new NTCredentials(domainUser.getUsername(), proxyConfig.getProxyPassword(), null, domainUser.getDomain());
         } else {
-            return new UsernamePasswordCredentials(proxyConfig.getProxyHttpUsername(),
-                    proxyConfig.getProxyHttpPassword());
+            logger.debug("Create basic credentials for username: {}", proxyConfig.getProxyUsername());
+            return new UsernamePasswordCredentials(proxyConfig.getProxyUsername(),
+                    proxyConfig.getProxyPassword());
         }
     });
 
-    public NonWindowsCredentialsProvider(ProxyConfig proxyConfig) {
+    public ManualAuthCredentialsProvider(ProxyConfig proxyConfig) {
         this.proxyConfig = proxyConfig;
     }
 

@@ -103,7 +103,7 @@ public class Views {
                     return DirectNonWindows.class;
                 }
             case HTTP:
-                if (proxyConfig.isAuthAutoMode()) {
+                if (proxyConfig.isHttpAuthAutoMode()) {
                     return HttpWindows.class;
                 } else {
                     if (proxyConfig.getHttpAuthProtocol() == ProxyConfig.HttpAuthProtocol.KERBEROS) {

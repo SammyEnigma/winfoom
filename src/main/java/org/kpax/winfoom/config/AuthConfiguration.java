@@ -21,8 +21,9 @@ import org.apache.http.impl.auth.*;
 import org.apache.http.impl.auth.win.WindowsCredentialsProvider;
 import org.apache.http.impl.auth.win.WindowsNTLMSchemeFactory;
 import org.apache.http.impl.auth.win.WindowsNegotiateSchemeFactory;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
-import org.kpax.winfoom.proxy.NonWindowsCredentialsProvider;
+import org.kpax.winfoom.proxy.ManualAuthCredentialsProvider;
 import org.kpax.winfoom.util.functional.ProxySingletonSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +46,8 @@ class AuthConfiguration {
         return new ProxySingletonSupplier<>(
                 () -> proxyConfig.isAuthAutoMode() ?
                         new WindowsCredentialsProvider(new SystemDefaultCredentialsProvider()) :
-                        new NonWindowsCredentialsProvider(proxyConfig));
+                        proxyConfig.isPacAuthDisabledMode() ?
+                                new BasicCredentialsProvider() : new ManualAuthCredentialsProvider(proxyConfig));
     }
 
     /**
@@ -57,7 +59,7 @@ class AuthConfiguration {
     @Bean
     public ProxySingletonSupplier<Registry<AuthSchemeProvider>> authSchemeRegistrySupplier(ProxyConfig proxyConfig) {
         return new ProxySingletonSupplier<>(() -> {
-            RegistryBuilder<AuthSchemeProvider> register = RegistryBuilder.<AuthSchemeProvider>create()
+            RegistryBuilder<AuthSchemeProvider> registryBuilder = RegistryBuilder.<AuthSchemeProvider>create()
                     .register(AuthSchemes.BASIC, new BasicSchemeFactory())
                     .register(AuthSchemes.DIGEST, new DigestSchemeFactory())
                     .register(AuthSchemes.NTLM, proxyConfig.isAuthAutoMode() ?
@@ -65,9 +67,9 @@ class AuthConfiguration {
                     .register(AuthSchemes.SPNEGO, proxyConfig.isAuthAutoMode() ?
                             new WindowsNegotiateSchemeFactory(null) : new SPNegoSchemeFactory());
             if (!proxyConfig.isAuthAutoMode()) {
-                register.register(AuthSchemes.KERBEROS, new KerberosSchemeFactory());
+                registryBuilder.register(AuthSchemes.KERBEROS, new KerberosSchemeFactory());
             }
-            return register.build();
+            return registryBuilder.build();
         });
     }
 

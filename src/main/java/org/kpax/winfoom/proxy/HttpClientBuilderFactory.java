@@ -21,6 +21,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.kpax.winfoom.annotation.ThreadSafe;
+import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.util.functional.ProxySingletonSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,10 @@ public class HttpClientBuilderFactory {
 
     @Autowired
     private SystemConfig systemConfig;
+
+
+    @Autowired
+    private ProxyConfig proxyConfig;
 
     @Autowired
     private ProxySingletonSupplier<CredentialsProvider> credentialsProviderSupplier;

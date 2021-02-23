@@ -234,8 +234,8 @@ public class AppFrame extends JFrame {
         return new JLabel("Password" + (mandatory ? "* " : " "));
     }
 
-    private JLabel getAuthProtocolLabel() {
-        return new JLabel("Authentication protocol* ");
+    private JLabel getAuthProtocolLabel(boolean mandatory) {
+        return new JLabel("Authentication protocol" + (mandatory ? "* " : " "));
     }
 
     private JLabel getBlacklistTimeoutLabel() {
@@ -255,10 +255,21 @@ public class AppFrame extends JFrame {
         return proxyTypeCombo;
     }
 
-    private JComboBox<ProxyConfig.HttpAuthProtocol> getAuthProtocolCombo() {
+    private JComboBox<ProxyConfig.HttpAuthProtocol> getHttpAuthProtocolCombo() {
         JComboBox<ProxyConfig.HttpAuthProtocol> comboBox = new JComboBox<>(ProxyConfig.HttpAuthProtocol.values());
         comboBox.setSelectedItem(proxyConfig.getHttpAuthProtocol());
         comboBox.addActionListener((e) -> proxyConfig.setHttpAuthProtocol((ProxyConfig.HttpAuthProtocol) comboBox.getSelectedItem()));
+        return comboBox;
+    }
+
+    private JComboBox<ProxyConfig.HttpAuthProtocol> getPacAuthProtocolCombo() {
+        JComboBox<ProxyConfig.HttpAuthProtocol> comboBox = new JComboBox<>(ProxyConfig.HttpAuthProtocol.values());
+        comboBox.insertItemAt(null, 0);
+        comboBox.setSelectedItem(proxyConfig.getPacHttpAuthProtocol());
+        comboBox.addActionListener((e) -> proxyConfig.setPacHttpAuthProtocol((ProxyConfig.HttpAuthProtocol) comboBox.getSelectedItem()));
+        comboBox.setToolTipText(HttpUtils.toHtml("The authentication protocol." +
+                "<br>Make sure that all the HTTP upstream proxies share the same protocol." +
+                "<br><b>Note:</b> Select this for HTTP upstream proxies only!"));
         return comboBox;
     }
 
@@ -320,7 +331,7 @@ public class AppFrame extends JFrame {
         return localPortJSpinner;
     }
 
-    private JTextField getSocks5UsernameJTextField() {
+    private JTextField getSocks5UsernameJTextField() {// FIXME Use getUsernameJTextField
         JTextField usernameJTextField = createTextField(proxyConfig.getProxyUsername());
         usernameJTextField.setToolTipText("The optional username if the SOCKS5 proxy requires authentication.");
         usernameJTextField.getDocument().addDocumentListener((TextChangeListener) (e) -> proxyConfig.setProxyUsername(usernameJTextField.getText()));
@@ -328,24 +339,42 @@ public class AppFrame extends JFrame {
     }
 
 
-    private JPasswordField getSocks5PasswordField() {
-        JPasswordField passwordField = new JPasswordField(proxyConfig.getProxySocks5Password());
+    private JPasswordField getSocks5PasswordField() {// FIXME Use getPasswordField
+        JPasswordField passwordField = new JPasswordField(proxyConfig.getProxyPassword());
         passwordField.setToolTipText("The optional password if the SOCKS5 proxy requires authentication.");
         passwordField.getDocument().addDocumentListener((TextChangeListener) (e) -> proxyConfig.setProxyPassword(new String(passwordField.getPassword())));
         return passwordField;
     }
 
-    private JTextField getHttpUsernameJTextField() {
-        JTextField usernameJTextField = createTextField(proxyConfig.getProxyHttpUsername());
-        usernameJTextField.setToolTipText("The username or DOMAIN\\username required by the upstream proxy");
+    private JTextField getHttpUsernameTextField() {
+        return getUsernameTextField("The username or DOMAIN\\username required by the upstream proxy");
+    }
+
+    private JPasswordField getHttpPasswordField() {
+        return getPasswordField("The password required by the upstream proxy");
+    }
+
+    private JTextField getPacUsernameTextField() {
+        return getUsernameTextField(HttpUtils.toHtml("The username or DOMAIN\\username when required by the upstream proxy." +
+                "<br>On Windows, when leaving this field empty the current user's credentials would be used." +
+                "<br>On other operating systems leaving this field empty would cancel authentication."));
+    }
+
+    private JPasswordField getPacPasswordField() {
+        return getPasswordField("The password when required by the upstream proxy");
+    }
+
+    private JTextField getUsernameTextField(String toolTipText) {
+        JTextField usernameJTextField = createTextField(proxyConfig.getProxyUsername());
+        usernameJTextField.setToolTipText(toolTipText);
         usernameJTextField.getDocument().addDocumentListener((TextChangeListener) (e) -> proxyConfig.setProxyUsername(usernameJTextField.getText()));
         return usernameJTextField;
     }
 
 
-    private JPasswordField getHttpPasswordField() {
-        JPasswordField passwordField = new JPasswordField(proxyConfig.getProxyHttpPassword());
-        passwordField.setToolTipText("The password required by the upstream proxy");
+    private JPasswordField getPasswordField(String toolTipText) {
+        JPasswordField passwordField = new JPasswordField(proxyConfig.getProxyPassword());
+        passwordField.setToolTipText(toolTipText);
         passwordField.getDocument().addDocumentListener((TextChangeListener) (e) -> proxyConfig.setProxyPassword(new String(passwordField.getPassword())));
         return passwordField;
     }
@@ -541,12 +570,12 @@ public class AppFrame extends JFrame {
         fieldPanel.add(getUseSystemCredentialsJCheckBox());
 
         if (!proxyConfig.isUseCurrentCredentials()) {
-            labelPanel.add(getAuthProtocolLabel());
+            labelPanel.add(getAuthProtocolLabel(true));
             labelPanel.add(getUsernameLabel(true));
             labelPanel.add(getPasswordLabel(true));
 
-            fieldPanel.add((wrapToPanel(getAuthProtocolCombo())));
-            fieldPanel.add(getHttpUsernameJTextField());
+            fieldPanel.add((wrapToPanel(getHttpAuthProtocolCombo())));
+            fieldPanel.add(getHttpUsernameTextField());
             fieldPanel.add(getHttpPasswordField());
         }
     }
@@ -565,11 +594,18 @@ public class AppFrame extends JFrame {
         labelPanel.add(getPacFileLabel());
         labelPanel.add(getBlacklistTimeoutLabel());
         labelPanel.add(getLocalPortLabel());
+        labelPanel.add(getUsernameLabel(false));
+        labelPanel.add(getPasswordLabel(false));
+        labelPanel.add(getAuthProtocolLabel(false));
 
         fieldPanel.add(getPacFileJTextField());
         fieldPanel.add(wrapToPanel(getBlacklistTimeoutJSpinner(),
                 new JLabel(" (" + ProxyBlacklist.TEMPORAL_UNIT.toString().toLowerCase() + ")")));
         fieldPanel.add(wrapToPanel(getLocalPortJSpinner()));
+
+        fieldPanel.add(getPacUsernameTextField());
+        fieldPanel.add(getPacPasswordField());
+        fieldPanel.add((wrapToPanel(getPacAuthProtocolCombo())));
 
         getBtnCancelBlacklist().setEnabled(false);
         getBtnCancelBlacklist().setVisible(true);

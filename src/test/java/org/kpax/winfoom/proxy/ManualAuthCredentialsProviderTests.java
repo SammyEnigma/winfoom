@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class NonWindowsCredentialsProviderTests {
+public class ManualAuthCredentialsProviderTests {
 
     @Mock
     private ProxyConfig proxyConfig;
@@ -37,11 +37,11 @@ public class NonWindowsCredentialsProviderTests {
 
     @Test
     public void getCredentials_withoutDomain_NoError() {
-        when(proxyConfig.getProxyHttpUsername()).thenReturn("randomUser");
-        when(proxyConfig.getProxyHttpPassword()).thenReturn("randomPassword");
+        when(proxyConfig.getProxyUsername()).thenReturn("randomUser");
+        when(proxyConfig.getProxyPassword()).thenReturn("randomPassword");
 
-        NonWindowsCredentialsProvider nonWindowsCredentialsProvider = new NonWindowsCredentialsProvider(proxyConfig);
-        Credentials credentials = nonWindowsCredentialsProvider.getCredentials(null);
+        ManualAuthCredentialsProvider manualAuthCredentialsProvider = new ManualAuthCredentialsProvider(proxyConfig);
+        Credentials credentials = manualAuthCredentialsProvider.getCredentials(null);
 
         assertEquals("Incorrect principal", "randomUser", credentials.getUserPrincipal().getName());
         assertEquals("Incorrect password", "randomPassword", credentials.getPassword());
@@ -49,12 +49,12 @@ public class NonWindowsCredentialsProviderTests {
 
     @Test
     public void getCredentials_withDomain_NoError() {
-        when(proxyConfig.getProxyHttpUsername()).thenReturn("MyDomain\\randomUser");
-        when(proxyConfig.getProxyHttpPassword()).thenReturn("randomPassword");
+        when(proxyConfig.getProxyUsername()).thenReturn("MyDomain\\randomUser");
+        when(proxyConfig.getProxyPassword()).thenReturn("randomPassword");
         when(proxyConfig.isNtlm()).thenReturn(true);
 
-        NonWindowsCredentialsProvider nonWindowsCredentialsProvider = new NonWindowsCredentialsProvider(proxyConfig);
-        Credentials credentials = nonWindowsCredentialsProvider.getCredentials(null);
+        ManualAuthCredentialsProvider manualAuthCredentialsProvider = new ManualAuthCredentialsProvider(proxyConfig);
+        Credentials credentials = manualAuthCredentialsProvider.getCredentials(null);
 
         assertEquals("Incorrect principal", "MYDOMAIN\\randomUser", credentials.getUserPrincipal().getName());
         assertEquals("Incorrect password", "randomPassword", credentials.getPassword());

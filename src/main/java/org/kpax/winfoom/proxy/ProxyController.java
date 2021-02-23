@@ -18,6 +18,7 @@ import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.pac.net.IpAddresses;
 import org.kpax.winfoom.proxy.listener.StartListener;
 import org.kpax.winfoom.proxy.listener.StopListener;
+import org.kpax.winfoom.util.DomainUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +85,11 @@ public class ProxyController {
             resetState();
             throw e;
         }
-        if (proxyConfig.getProxyType().isSocks5()) {
+        if (proxyConfig.getProxyType().isSocks5() || proxyConfig.isPacAuthManualMode()) {
             Authenticator.setDefault(new Authenticator() {
                 public PasswordAuthentication getPasswordAuthentication() {
-                    String proxyPassword = proxyConfig.getProxySocks5Password();
-                    return (new PasswordAuthentication(proxyConfig.getProxySocks5Username(),
+                    String proxyPassword = proxyConfig.getProxyPassword();
+                    return (new PasswordAuthentication(DomainUser.extractUsername(proxyConfig.getProxyUsername()),
                             proxyPassword != null ? proxyPassword.toCharArray() : new char[0]));
                 }
             });
@@ -123,7 +124,7 @@ public class ProxyController {
         IpAddresses.primaryIPv4Address.reset();
 
         // Remove auth for SOCKS proxy
-        if (proxyConfig.getProxyType().isSocks5()) {
+        if (proxyConfig.getProxyType().isSocks5() || proxyConfig.isPacAuthManualMode()) {
             Authenticator.setDefault(null);
         }
     }

@@ -22,12 +22,22 @@ public final class DomainUser {
         return domain;
     }
 
-    public static DomainUser from (@NotNull String domainUsername) {
+    public static DomainUser from(@NotNull String domainUsername) {
         int backslashIndex = domainUsername.indexOf('\\');
         return new DomainUser(backslashIndex > -1 ?
                 domainUsername.substring(backslashIndex + 1) : domainUsername,
                 backslashIndex > -1 ?
                         domainUsername.substring(0, backslashIndex).toUpperCase(Locale.ROOT) : null);
+    }
+
+    public static String extractUsername(String domainUsername) {
+        if (domainUsername != null) {
+            int backslashIndex = domainUsername.indexOf('\\');
+            return backslashIndex > -1 ?
+                    domainUsername.substring(backslashIndex + 1) : domainUsername;
+        } else {
+            return null;
+        }
     }
 
     @Override
