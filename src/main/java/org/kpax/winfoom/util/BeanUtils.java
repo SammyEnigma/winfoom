@@ -18,18 +18,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.Map;
 
 public class BeanUtils {
     private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
-    public static void copyNonNullProperties(Object src, Object dest)
+    public static void copyNonNullProperties(Iterator<String> fieldNamesItr, Object src, Object dest)
             throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Map<String, Object> objectMap = PropertyUtils.describe(src);
-        for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
-            if (!entry.getKey().equals("class") && entry.getValue() != null) {
-                logger.debug("set property: {}={}", entry.getKey(), entry.getValue());
-                PropertyUtils.setProperty(dest, entry.getKey(), entry.getValue());
+        for (; fieldNamesItr.hasNext();) {
+            String fieldName = fieldNamesItr.next();
+            if (objectMap.containsKey(fieldName)) {
+                Object fieldValue = objectMap.get(fieldName);
+                logger.debug("Set property: {}={}", fieldName, fieldValue);
+                PropertyUtils.setProperty(dest, fieldName, fieldValue);
+            } else {
+                throw new IllegalArgumentException("The source object does not contain the field [" + fieldName + "] ");
             }
         }
     }

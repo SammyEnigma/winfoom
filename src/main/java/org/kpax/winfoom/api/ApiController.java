@@ -13,8 +13,10 @@
 
 package org.kpax.winfoom.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.Credentials;
@@ -33,6 +35,7 @@ import org.kpax.winfoom.proxy.ProxyController;
 import org.kpax.winfoom.proxy.ProxyExecutorService;
 import org.kpax.winfoom.proxy.ProxyValidator;
 import org.kpax.winfoom.util.BeanUtils;
+import org.kpax.winfoom.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -200,11 +204,10 @@ public class ApiController implements AutoCloseable {
                                     if (request instanceof BasicHttpEntityEnclosingRequest) {
                                         BasicHttpEntityEnclosingRequest entityEnclosingRequest = (BasicHttpEntityEnclosingRequest) request;
                                         try {
-                                            ProxyConfigDto proxyConfigDto = new ObjectMapper().
-                                                    readValue(entityEnclosingRequest.getEntity().getContent(),
-                                                            ProxyConfigDto.class);
+                                            String json = IOUtils.toString(entityEnclosingRequest.getEntity().getContent(), StandardCharsets.UTF_8);
+                                            ProxyConfigDto proxyConfigDto = new ObjectMapper().readValue(json, ProxyConfigDto.class);
                                             proxyConfigDto.validate();
-                                            BeanUtils.copyNonNullProperties(proxyConfigDto, proxyConfig);
+                                            BeanUtils.copyNonNullProperties(JsonUtils.getFieldNames(json), proxyConfigDto, proxyConfig);
                                             response.setEntity(new StringEntity("Proxy configuration changed"));
                                         } catch (IOException e) {
                                             logger.error("Error on parsing JSON", e);
@@ -251,11 +254,10 @@ public class ApiController implements AutoCloseable {
                                     if (request instanceof BasicHttpEntityEnclosingRequest) {
                                         BasicHttpEntityEnclosingRequest entityEnclosingRequest = (BasicHttpEntityEnclosingRequest) request;
                                         try {
-                                            ProxyConfigDto proxyConfigDto = new ObjectMapper().
-                                                    readValue(entityEnclosingRequest.getEntity().getContent(),
-                                                            ProxyConfigDto.class);
+                                            String json = IOUtils.toString(entityEnclosingRequest.getEntity().getContent(), StandardCharsets.UTF_8);
+                                            ProxyConfigDto proxyConfigDto = new ObjectMapper().readValue(json, ProxyConfigDto.class);
                                             proxyConfigDto.validate();
-                                            BeanUtils.copyNonNullProperties(proxyConfigDto, proxyConfig);
+                                            BeanUtils.copyNonNullProperties(JsonUtils.getFieldNames(json), proxyConfigDto, proxyConfig);
                                             response.setEntity(new StringEntity("Proxy settings changed"));
                                         } catch (IOException e) {
                                             logger.error("Error on parsing JSON", e);
