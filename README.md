@@ -270,6 +270,25 @@ For Kerberos proxy protocol, the config JSON would look something like:
 
 ---
 
+If the proxy type is PAC, then the output of the `foomcli config` command should be like:
+
+```
+{
+  "proxyType" : "PAC",
+  "proxyUsername" : "DOMAIN\\winfoom",
+  "proxyPassword" : "***",
+  "proxyPacFileLocation" : "C:\\path_to\\proxy-ntlm-auth.pac",
+  "blacklistTimeout" : 30,
+  "localPort" : 3129,
+  "proxyTestUrl" : "https://example.com",
+  "pacHttpAuthProtocol" : "NTLM"
+}
+```
+
+The possible values of `pacHttpAuthProtocol` field are: `NTLM`, `KERBEROS`, `BASIC`. You need to set this field only when the PAC file points to at least on upstream HTTP proxy.
+
+---
+
 To put Winfoom in autostart mode first execute:
 
 `foomcli settings`
