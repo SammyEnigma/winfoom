@@ -270,7 +270,7 @@ For Kerberos proxy protocol, the config JSON would look something like:
 
 ---
 
-If the proxy type is PAC, then the output of the `foomcli config` command should be like:
+If the proxy type is PAC, then the output of the `foomcli config` command would be like:
 
 ```
 {
@@ -285,7 +285,7 @@ If the proxy type is PAC, then the output of the `foomcli config` command should
 }
 ```
 
-The possible values of `pacHttpAuthProtocol` field are: `NTLM`, `KERBEROS`, `BASIC`. You need to set this field only when the PAC file points to at least on upstream HTTP proxy.
+The possible values of `pacHttpAuthProtocol` field are: `NTLM`, `KERBEROS`, `BASIC`. You need to set this field only when the PAC file points to at least one upstream HTTP proxy.
 
 ---
 
