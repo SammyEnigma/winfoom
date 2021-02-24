@@ -111,9 +111,9 @@ The application log file is placed under `<WINFOOM_CONFIG>/.winfoom/logs` direct
 Winfoom has a graphical user interface that allows configuration.
  
 The first thing to select is the proxy type:
-1) `HTTP` - if the remote proxy is NTLM, KERBEROS or any other HTTP proxy
-2) `SOCKS4` - if the remote proxy is SOCKS version 4
-3) `SOCKS5` - if the remote proxy is SOCKS version 5
+1) `HTTP` - if the upstream proxy is NTLM, KERBEROS or any other HTTP proxy
+2) `SOCKS4` - if the upstream proxy is SOCKS version 4
+3) `SOCKS5` - if the upstream proxy is SOCKS version 5
 4) `PAC` - if the proxy is using a Proxy Auto Config file
 5) `DIRECT` - no proxy, used for various testing environments
 
@@ -270,6 +270,25 @@ For Kerberos proxy protocol, the config JSON would look something like:
 
 ---
 
+If the proxy type is PAC, then the output of the `foomcli config` command would be like:
+
+```
+{
+  "proxyType" : "PAC",
+  "proxyUsername" : "DOMAIN\\winfoom",
+  "proxyPassword" : "***",
+  "proxyPacFileLocation" : "C:\\path_to\\proxy-ntlm-auth.pac",
+  "blacklistTimeout" : 30,
+  "localPort" : 3129,
+  "proxyTestUrl" : "https://example.com",
+  "pacHttpAuthProtocol" : "NTLM"
+}
+```
+
+The possible values of `pacHttpAuthProtocol` field are: `NTLM`, `KERBEROS`, `BASIC`. You need to set this field only when the PAC file points to at least one upstream HTTP proxy.
+
+---
+
 To put Winfoom in autostart mode first execute:
 
 `foomcli settings`
@@ -328,7 +347,7 @@ The available settings:
 |kerberos.login.minInterval|The minimum interval successful Kerberos login is allowed (seconds)|Integer|30|
 
 ### Authentication
-* For HTTP proxy type, Winfoom uses the current Windows user credentials to authenticate to the remote proxy, 
+* For HTTP proxy type, Winfoom uses the current Windows user credentials to authenticate to the upstream proxy, 
   unless you uncheck the `Use system credentials` checkbox. 
   On Linux/Macos or on Windows with `Use system credentials` unchecked you need to provide the user and password (or DOMAIN\user and password if the DOMAIN is required) 
 * For SOCKS5 proxy type, the user/password need to be provided when required.
@@ -341,13 +360,13 @@ The available settings:
      If at least one of the upstream proxy servers is of HTTP type, the field `pacHttpAuthProtocol` needs to be provided.
 
 ### Error codes
-Starting with v2.6.0 Winfoom gives back the following HTTP error codes when there is no response from the remote proxy for various reasons:
+Starting with v2.6.0 Winfoom gives back the following HTTP error codes when there is no response from the upstream proxy for various reasons:
 
 | Proxy type         |  HTTP error code  |  When  |
 |--------------------|:-----------------:|:------:|
-|ALL|502|The remote proxy is not available|
+|ALL|502|The upstream proxy is not available|
 |SOCKS/DIRECT|504|The giving address is not reachable|
-|PAC|502|All remote proxies are blacklisted|
+|PAC|502|All upstream proxies are blacklisted|
 |ALL|500|Any other error|
 
 ### Test
