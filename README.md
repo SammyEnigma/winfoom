@@ -384,7 +384,7 @@ _If you don't have an available proxy, you still can test Winfoom by installing 
 as a NTML proxy._
 
 ## Docker image
-Starting with v3.4.0, there is a Docker image for every version on [dockerhub](https://hub.docker.com/repository/docker/ecovaci/winfoom). 
+Starting with v3.4.0, there is a Docker image for every version on [dockerhub](https://hub.docker.com/r/ecovaci/winfoom). 
 
 ### Create your own image
 If you decide to build your own docker image, here are the steps:
@@ -393,7 +393,7 @@ If you decide to build your own docker image, here are the steps:
 3. Create the Docker image with: `docker build . --tag winfoom:x.x.x` (replace x.x.x with the application's version)
 4. Instantiate the Docker container with: `docker run -d --name winfoom -p 3129:3129 -p 9999:9999 winfoom:x.x.x`
 
-You can read [dockerhub's README](https://hub.docker.com/repository/docker/ecovaci/winfoom) for further instructions.
+You can read [dockerhub's README](https://hub.docker.com/r/ecovaci/winfoom) for further instructions.
    
 # Coding Guidance
 
