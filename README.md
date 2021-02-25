@@ -323,6 +323,10 @@ then check the new settings with `foomcli settings`
 > 👉 Note: If you modify the apiPort then you need to set the variable FOOM_LOCATION. 
 > (For example FOOM_LOCATION=localhost:[your new port])
 
+> 👉 WARNING: All the provided passwords are stored encoded BASE64 without any encryption. 
+> Make sure you protect the access to the config directory!
+
+
 ### System settings
 The system settings configuration file is `<WINFOOM_CONFIG>/.winfoom/system.properties`.
 
@@ -378,6 +382,18 @@ Now you should be able to access any URL without Firefox asking for credentials.
 
 _If you don't have an available proxy, you still can test Winfoom by installing [WinGate](https://www.wingate.com/) and configure it to act 
 as a NTML proxy._
+
+## Docker image
+Starting with v3.4.0, there is a Docker image for every version on [dockerhub](https://hub.docker.com/repository/docker/ecovaci/winfoom). 
+
+### Create your own image
+If you decide to build your own docker image, here are the steps:
+1. Download the `Source code` archive for a certain release and unpack it.
+2. Execute `mvn clean package -DskipTests` inside the `Source code` directory.
+3. Create the Docker image with: `docker build . --tag winfoom:x.x.x` (replace x.x.x with the application's version)
+4. Instantiate the Docker container with: `docker run -d --name winfoom -p 3129:3129 -p 9999:9999 winfoom:x.x.x`
+
+You can read [dockerhub](https://hub.docker.com/repository/docker/ecovaci/winfoom) for further instructions.
    
 # Coding Guidance
 

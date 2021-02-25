@@ -1,18 +1,28 @@
-FROM openjdk:11-alpine
+FROM adoptopenjdk:11-jre-hotspot
 
 LABEL description="Basic Proxy Facade for NTLM, Kerberos, SOCKS and Proxy Auto Config file proxies"
 LABEL maintainer="ecovaci"
 
-# Add Spring Boot app.jar to Container
-ADD target/winfoom.jar winfoom.jar
+RUN mkdir /opt/winfoom
 
-EXPOSE 3129
-EXPOSE 9999
+ADD target/winfoom.jar /opt/winfoom/winfoom.jar
 
-RUN adduser -D winfoom
+ADD docker-entrypoint.sh /opt/winfoom/docker-entrypoint.sh
+
+RUN chmod +x /opt/winfoom/docker-entrypoint.sh
+
+EXPOSE 3129 9999
+
+RUN groupadd -r winfoom && useradd -r -g winfoom winfoom
+
+RUN mkdir /data && chown winfoom:winfoom /data
+
 USER winfoom
 
-ARG FOOM_ARGS
+VOLUME /data
 
-# Fire up our Spring Boot app by default
-ENTRYPOINT [ "sh", "-c", "java -server $FOOM_ARGS -Djava.security.egd=file:/dev/./urandom -jar winfoom.jar" ]
+ENV WINFOOM_CONFIG=/data
+
+WORKDIR /opt/winfoom
+
+ENTRYPOINT [ "/opt/winfoom/docker-entrypoint.sh" ]
