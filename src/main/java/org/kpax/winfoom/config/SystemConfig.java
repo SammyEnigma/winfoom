@@ -145,6 +145,9 @@ public class SystemConfig {
     @Value("${kerberos.login.minInterval:30}")
     private Integer kerberosLoginMinInterval;
 
+    @Value("${API_DISABLE_SHUTDOWN:false}")
+    private boolean apiDisableShutdown;
+
     @PostConstruct
     private void init() {
         logger.info("System settings: {}", this);
@@ -208,6 +211,10 @@ public class SystemConfig {
 
     public Integer getKerberosLoginMinInterval() {
         return kerberosLoginMinInterval;
+    }
+
+    public boolean isApiDisableShutdown() {
+        return apiDisableShutdown;
     }
 
     public RequestConfig.Builder applyConfig(final RequestConfig.Builder configBuilder) {

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.Credentials;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -281,8 +282,13 @@ public class ApiController implements AutoCloseable {
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
                                 logger.debug("'shutdown' command received");
-                                new Thread(applicationContext::close).start();
-                                response.setEntity(new StringEntity("Shutdown initiated"));
+                                if (systemConfig.isApiDisableShutdown()) {
+                                    response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+                                    response.setEntity(new StringEntity("Shutdown is disabled by system configuration"));
+                                } else {
+                                    new Thread(applicationContext::close).start();
+                                    response.setEntity(new StringEntity("Shutdown initiated"));
+                                }
                             }
                         }).create();
         apiServer.start();

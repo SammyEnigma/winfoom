@@ -22,6 +22,7 @@ USER winfoom
 VOLUME /data
 
 ENV WINFOOM_CONFIG=/data
+ENV API_DISABLE_SHUTDOWN=true
 
 WORKDIR /opt/winfoom
 
