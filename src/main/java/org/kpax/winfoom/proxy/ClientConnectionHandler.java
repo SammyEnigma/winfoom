@@ -22,7 +22,6 @@ import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.pac.PacScriptEvaluator;
 import org.kpax.winfoom.proxy.listener.StopListener;
 import org.kpax.winfoom.proxy.processor.ConnectionProcessorSelector;
-import org.kpax.winfoom.util.InputOutputs;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,14 +75,11 @@ public class ClientConnectionHandler implements StopListener {
             clientConnection = new ClientConnection(socket, proxyConfig, systemConfig,
                     connectionProcessorSelector, proxyInfoSupplier.get());
         }
-        try {
-            RequestLine requestLine = clientConnection.getRequestLine();
-            logger.debug("Handle request: {}", requestLine);
-            clientConnection.process();
-            logger.debug("Done handling request: {}", requestLine);
-        } finally {
-            InputOutputs.close(clientConnection);
-        }
+
+        RequestLine requestLine = clientConnection.getRequestLine();
+        logger.debug("Handle request: {}", requestLine);
+        clientConnection.process();
+        logger.debug("Done handling request: {}", requestLine);
     }
 
     @Override

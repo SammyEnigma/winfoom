@@ -53,14 +53,9 @@ import java.util.*;
  * @author Eugen Covaci
  */
 @NotThreadSafe
-public final class ClientConnection implements StreamSource, AutoCloseable {
+public final class ClientConnection implements StreamSource {
 
     private final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
-
-    /**
-     * The list of {@link AutoCloseable}s to be closed when this instance's {@link #close()} method is called.
-     */
-    private final Set<AutoCloseable> autoCloseables = new HashSet<>();
 
     /**
      * The underlying socket.
@@ -491,11 +486,6 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
             }
         }
         return false;
-    }
-
-    @Override
-    public void close() {
-        autoCloseables.forEach(InputOutputs::close);
     }
 
     @Override
