@@ -39,7 +39,7 @@ import java.util.concurrent.Future;
  * Created on 4/6/2020
  */
 @NotThreadSafe
-public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeable {
+public class RepeatableHttpEntity extends AbstractHttpEntity {
 
     private final SessionInputBufferImpl inputBuffer;
 
@@ -215,26 +215,18 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
         return streaming;
     }
 
-    @Override
-    public void close() throws IOException {
-        // Delete the temp file if exists
-        if (tempFilepath != null) {
-            Files.deleteIfExists(tempFilepath);
-        }
-    }
-
     @NotThreadSafe
     private class CacheFileChannel implements AutoCloseable {
         private final ByteBuffer byteBuffer;
         private final AsynchronousFileChannel fileChannel;
-
         private long position = 0;
 
         private CacheFileChannel(final byte[] buffer) throws IOException {
             this.byteBuffer = ByteBuffer.wrap(buffer);
             this.fileChannel = AsynchronousFileChannel.open(tempFilepath,
                     StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE);
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.DELETE_ON_CLOSE);
         }
 
         void write(int length) throws IOException {

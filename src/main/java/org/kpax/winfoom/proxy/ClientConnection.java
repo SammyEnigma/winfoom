@@ -385,16 +385,6 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
     }
 
     /**
-     * Register an {@link AutoCloseable} for later closing.
-     *
-     * @param autoCloseable the {@link AutoCloseable} to be closed.
-     * @return {@code true} if the specified element isn't already registered
-     */
-    public boolean registerAutoCloseable(final AutoCloseable autoCloseable) {
-        return autoCloseables.add(autoCloseable);
-    }
-
-    /**
      * Process the client connection with each available proxy.
      * <p><b>This method does always commit the response.</b></p>
      */
@@ -430,8 +420,6 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
                     sessionInputBuffer,
                     proxyConfig.getTempDirectory(),
                     systemConfig.getInternalBufferLength());
-            registerAutoCloseable(entity);
-
             Header transferEncoding = request.getFirstHeader(HTTP.TRANSFER_ENCODING);
             if (transferEncoding != null
                     && StringUtils.containsIgnoreCase(transferEncoding.getValue(), HTTP.CHUNK_CODING)) {
