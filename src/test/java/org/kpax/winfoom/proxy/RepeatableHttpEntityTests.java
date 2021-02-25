@@ -60,7 +60,6 @@ class RepeatableHttpEntityTests {
     private final String echoContentHeader = "Echo-content";
     private final String streamingHeader = "Is-streaming";
     private final String tempFilenameHeader = "Temp-filename";
-    private final String tempFileContentHeader = "Temp-file-content";
     private final String bufferedBytesHeader = "Buffered-bytes";
 
     private ServerSocket serverSocket;
@@ -133,7 +132,6 @@ class RepeatableHttpEntityTests {
                                 Path tempFilepath = (Path) ReflectionTestUtils.getField(requestEntity, "tempFilepath");
                                 if (tempFilepath != null) {
                                     clientConnection.write(HttpUtils.createHttpHeader(tempFilenameHeader, tempFilepath.getFileName().toString()));
-                                    clientConnection.write(HttpUtils.createHttpHeader(tempFileContentHeader, Files.readString(tempFilepath)));
                                 }
 
                                 byte[] bufferedBytes = (byte[]) ReflectionTestUtils.getField(requestEntity, "bufferedBytes");
@@ -177,7 +175,6 @@ class RepeatableHttpEntityTests {
                 assertTrue(response.containsHeader(streamingHeader));
                 assertEquals("false", response.getFirstHeader(streamingHeader).getValue());
                 assertTrue(response.containsHeader(tempFilenameHeader));
-                assertEquals(content, response.getFirstHeader(tempFileContentHeader).getValue());
             }
         }
     }
@@ -247,7 +244,6 @@ class RepeatableHttpEntityTests {
                 EntityUtils.consume(response.getEntity());
                 assertEquals("false", response.getFirstHeader(streamingHeader).getValue());
                 assertTrue(response.containsHeader(tempFilenameHeader));
-                assertEquals(content, response.getFirstHeader(tempFileContentHeader).getValue());
             }
         }
     }
@@ -266,7 +262,6 @@ class RepeatableHttpEntityTests {
                 EntityUtils.consume(response.getEntity());
                 assertEquals("false", response.getFirstHeader(streamingHeader).getValue());
                 assertTrue(response.containsHeader(tempFilenameHeader));
-                assertEquals(content, response.getFirstHeader(tempFileContentHeader).getValue());
             }
         }
     }
