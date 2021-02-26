@@ -25,6 +25,7 @@ import org.kpax.winfoom.api.json.Asterisk;
 import org.kpax.winfoom.api.json.Views;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
 import org.kpax.winfoom.proxy.ProxyType;
+import org.kpax.winfoom.proxy.listener.StartListener;
 import org.kpax.winfoom.util.DomainUser;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.jna.IEProxyConfig;
@@ -61,7 +62,7 @@ import java.util.*;
 @Component
 @PropertySource(value = "file:${" + SystemConfig.WINFOOM_CONFIG_ENV + "}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + ProxyConfig.FILENAME,
         ignoreResourceNotFound = true)
-public class ProxyConfig {
+public class ProxyConfig implements StartListener {
 
     public static final String FILENAME = "proxy.properties";
 
@@ -153,6 +154,11 @@ public class ProxyConfig {
     private String krb5ConfFilepath;
 
     private Path tempDirectory;
+
+    // --- Calculated fields on server startup
+
+    private boolean kerberos;
+    private boolean ntlm;
 
     @PostConstruct
     public void init() throws IOException, ConfigurationException {
@@ -581,15 +587,11 @@ public class ProxyConfig {
     }
 
     public boolean isKerberos() {
-        return !isAuthAutoMode() &&
-                ((proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isKerberos()) ||
-                        (proxyType.isPac() && pacHttpAuthProtocol != null && pacHttpAuthProtocol.isKerberos()));
+        return kerberos;
     }
 
     public boolean isNtlm() {
-        return !isAuthAutoMode() &&
-                ((proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isNtlm()) ||
-                        (proxyType.isPac() && pacHttpAuthProtocol != null && pacHttpAuthProtocol.isNtlm()));
+        return ntlm;
     }
 
     @Autowired
@@ -744,6 +746,16 @@ public class ProxyConfig {
                 ", krb5ConfFilepath='" + krb5ConfFilepath + '\'' +
                 ", tempDirectory=" + tempDirectory +
                 '}';
+    }
+
+    @Override
+    public void onStart() throws Exception {
+        this.kerberos = !isAuthAutoMode() &&
+                ((proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isKerberos()) ||
+                        (proxyType.isPac() && pacHttpAuthProtocol != null && pacHttpAuthProtocol.isKerberos()));
+        this.ntlm = !isAuthAutoMode() &&
+                ((proxyType.isHttp() && httpAuthProtocol != null && httpAuthProtocol.isNtlm()) ||
+                        (proxyType.isPac() && pacHttpAuthProtocol != null && pacHttpAuthProtocol.isNtlm()));
     }
 
     public enum Type implements ProxyType {
