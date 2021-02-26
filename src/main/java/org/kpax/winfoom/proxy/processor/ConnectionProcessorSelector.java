@@ -37,17 +37,18 @@ public class ConnectionProcessorSelector {
 
     public ClientConnectionProcessor selectConnectionProcessor(boolean isConnect, @NotNull ProxyInfo proxyInfo) {
         if (isConnect) {
-            if (proxyInfo.getType().isSocks() || proxyInfo.getType().isDirect()) {
-                return socksConnectClientConnectionProcessor;
-            } else {
+            if (proxyInfo.getType().isHttp()) {
                 return httpConnectClientConnectionProcessor;
+            } else {
+                return socksConnectClientConnectionProcessor;
             }
         } else {
-            if (proxyInfo.getType().isSocks() || proxyInfo.getType().isDirect()) {
-                return socksNonConnectClientConnectionProcessor;
-            } else {
+            if (proxyInfo.getType().isHttp()) {
                 return nonConnectClientConnectionProcessor;
+            } else {
+                return socksNonConnectClientConnectionProcessor;
             }
         }
     }
+
 }
