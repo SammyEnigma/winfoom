@@ -56,6 +56,8 @@ public class KerberosTests {
         when(proxyConfig.getProxyHost()).thenReturn("localhost");
         when(proxyConfig.getProxyPort()).thenReturn(PROXY_PORT);
         when(proxyConfig.getLocalPort()).thenReturn(LOCAL_PROXY_PORT);
+        when(proxyConfig.isAuthAutoMode()).thenReturn(false);
+
         when(proxyConfig.getProxyHttpUsername()).thenReturn(KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_REALM +
                 "\\" + KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_USERNAME);
         when(proxyConfig.getProxyHttpPassword()).thenReturn(KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_PASSWORD);

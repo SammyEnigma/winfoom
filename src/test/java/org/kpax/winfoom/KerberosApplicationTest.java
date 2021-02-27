@@ -25,7 +25,6 @@ import org.springframework.context.annotation.*;
 public class KerberosApplicationTest {
 
     public static void main(String[] args) throws Exception {
-        ReflectUtils.setFinalStatic(SystemContext.class, "IS_OS_WINDOWS", false);
         System.setProperty("sun.security.krb5.debug", "true");
         System.setProperty("sun.security.jgss.debug", "true");
         SpringApplication.run(KerberosApplicationTest.class, args);

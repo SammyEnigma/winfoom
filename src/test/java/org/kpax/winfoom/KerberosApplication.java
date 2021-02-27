@@ -12,30 +12,33 @@
 
 package org.kpax.winfoom;
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.builder.fluent.*;
-import org.apache.commons.configuration2.ex.*;
-import org.apache.kerby.kerberos.kerb.*;
-import org.kpax.winfoom.config.*;
-import org.kpax.winfoom.kerberos.*;
-import org.kpax.winfoom.util.*;
-import org.slf4j.*;
-import org.springframework.beans.factory.config.*;
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.context.*;
-import org.springframework.context.annotation.*;
-import org.springframework.scheduling.annotation.*;
+import org.apache.kerby.kerberos.kerb.KrbException;
+import org.kpax.winfoom.config.ProxyConfig;
+import org.kpax.winfoom.config.SystemConfig;
+import org.kpax.winfoom.kerberos.KerberosHttpProxyMock;
+import org.kpax.winfoom.proxy.ProxyController;
+import org.kpax.winfoom.util.Base64DecoderPropertyEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.CustomEditorConfigurer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import javax.swing.*;
-import java.beans.*;
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
+import java.beans.PropertyEditor;
+import java.io.File;
+import java.net.UnknownHostException;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.kpax.winfoom.config.SystemConfig.WINFOOM_CONFIG_ENV;
 
 /**
- * The entry point for Winfoom application.
+ * Helper class for testing Kerberos protocol.
  */
 @EnableScheduling
 @SpringBootApplication
@@ -43,8 +46,18 @@ public class KerberosApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(KerberosApplication.class);
 
+    static {
+        String relPath = FoomApplicationTest.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        File targetDir = new File(relPath + "../../target");
+        File homeDir = Paths.get(targetDir.getAbsolutePath(), "config", SystemConfig.APP_HOME_DIR_NAME).toFile();
+        if (!homeDir.exists()) {
+            homeDir.mkdirs();
+        }
+        System.setProperty(WINFOOM_CONFIG_ENV, homeDir.getParentFile().getAbsolutePath());
+    }
+
     @Bean
-    KerberosHttpProxyMock kerberosHttpProxyMock () throws KrbException, UnknownHostException {
+    KerberosHttpProxyMock kerberosHttpProxyMock() throws KrbException, UnknownHostException {
         return new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().build();
     }
 
@@ -59,109 +72,41 @@ public class KerberosApplication {
 
     public static void main(String[] args) throws Exception {
 
-        ReflectUtils.setFinalStatic(SystemContext.class, "IS_OS_WINDOWS", false);
-
         System.setProperty("sun.security.krb5.debug", "true");
         System.setProperty("sun.security.jgss.debug", "true");
-
-        if (SystemContext.IS_GUI_MODE && !SystemContext.IS_OS_WINDOWS) {
-            logger.error("Graphical mode is not supported on " + SystemContext.OS_NAME + ", exit the application");
-            System.exit(1);
-        }
 
         logger.info("Application started at: {}", new Date());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Application shutdown at: {}", new Date());
         }));
 
-        if (SystemContext.IS_GUI_MODE) {
-            try {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            } catch (Exception e) {
-                logger.warn("Failed to set Windows L&F, use the default look and feel", e);
-            }
-        }
+        System.out.println(new File(".").getAbsolutePath());
 
-        // Check version
-        try {
-            checkAppVersion();
-        } catch (Exception e) {
-            logger.error("Failed to verify app version", e);
-            if (SystemContext.IS_GUI_MODE) {
-                SwingUtils.showErrorMessage(String.format("Failed to verify application version.<br>" +
-                                "Remove the %s directory then try again.",
-                        Paths.get(System.getProperty(SystemConfig.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME)));
-            }
-            System.exit(1);
-        }
+        // Set KRB5_CONFIG
+        System.setProperty("KRB5_CONFIG", "./src/test/resources/krb5.conf");
 
         logger.info("Bootstrap Spring's application context");
         try {
             ConfigurableApplicationContext applicationContext = SpringApplication.run(KerberosApplication.class, args);
             applicationContext.getBean(KerberosHttpProxyMock.class).start();
+
+            // Configure for Kerberos
+            ProxyConfig proxyConfig = applicationContext.getBean(ProxyConfig.class);
+            proxyConfig.setProxyType(ProxyConfig.Type.HTTP);
+            proxyConfig.setProxyHost("localhost");
+            proxyConfig.setProxyPort(KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_PROXY_PORT);
+            proxyConfig.setUseCurrentCredentials(false);
+            proxyConfig.setHttpAuthProtocol(ProxyConfig.HttpAuthProtocol.KERBEROS);
+            proxyConfig.setProxyUsername(KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_REALM +
+                    "\\" +
+                    KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_USERNAME);
+            proxyConfig.setProxyPassword(KerberosHttpProxyMock.KerberosHttpProxyMockBuilder.DEFAULT_PASSWORD);
+
+            // Start the local proxy server
+            applicationContext.getBean(ProxyController.class).start();
         } catch (Exception e) {
             logger.error("Error on bootstrapping Spring's application context", e);
-            if (SystemContext.IS_GUI_MODE) {
-                SwingUtils.showErrorMessage("Failed to launch the application." +
-                        "<br>Please check the application's log file.");
-            }
             System.exit(1);
-        }
-
-    }
-
-    /**
-     * Verify whether the existent system.properties file's releaseVersion property and
-     * the application version (extracted from the MANIFEST file) are the same or backward compatible.
-     * If not, the existent {@code *.properties} file are moved into a backup location.
-     *
-     * @throws IOException
-     * @throws ConfigurationException
-     */
-    private static void checkAppVersion() throws IOException, ConfigurationException {
-        logger.info("Check the application's version");
-        Path appHomePath = Paths.get(System.getProperty(SystemConfig.WINFOOM_CONFIG_ENV), SystemConfig.APP_HOME_DIR_NAME);
-        if (Files.exists(appHomePath)) {
-            Path proxyConfigPath = appHomePath.resolve(ProxyConfig.FILENAME);
-            if (Files.exists(proxyConfigPath)) {
-                Configuration configuration = new Configurations()
-                        .propertiesBuilder(proxyConfigPath.toFile()).getConfiguration();
-                String existingVersion = configuration.getString("app.version");
-                logger.info("existingVersion [{}]", existingVersion);
-                if (existingVersion != null) {
-                    String actualVersion = KerberosApplication.class.getPackage().getImplementationVersion();
-                    logger.info("actualVersion [{}]", actualVersion);
-                    if (actualVersion != null && !actualVersion.equals(existingVersion)) {
-                        boolean isCompatibleProxyConfig = !Files.exists(proxyConfigPath)
-                                || ProxyConfig.isCompatible(configuration);
-                        logger.info("The existent proxy config is compatible with the new one: {}",
-                                isCompatibleProxyConfig);
-
-                        if (!isCompatibleProxyConfig) {
-                            logger.info("Backup the existent proxy.properties file since is invalid" +
-                                    " (from a previous incompatible version)");
-                            InputOutputs.backupFile(proxyConfigPath,
-                                    SystemContext.IS_GUI_MODE,
-                                    StandardCopyOption.REPLACE_EXISTING);
-                        }
-                    }
-                } else {
-                    logger.info("Version not found within proxy.properties, " +
-                            "backup both config files since they are invalid (from a previous incompatible version)");
-                    InputOutputs.backupFile(proxyConfigPath,
-                            SystemContext.IS_GUI_MODE,
-                            StandardCopyOption.REPLACE_EXISTING);
-                    InputOutputs.backupFile(appHomePath.resolve(SystemConfig.FILENAME),
-                            SystemContext.IS_GUI_MODE,
-                            StandardCopyOption.REPLACE_EXISTING);
-                }
-            } else {
-                logger.info("No proxy.properties found, backup the system.properties file " +
-                        "since is invalid (from a previous incompatible version)");
-                InputOutputs.backupFile(appHomePath.resolve(SystemConfig.FILENAME),
-                        SystemContext.IS_GUI_MODE,
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
         }
     }
 

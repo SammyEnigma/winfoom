@@ -75,10 +75,10 @@ public class ProxyController {
                 TypeQualifier typeQualifier = startListener.getClass().getMethod("onStart").
                         getDeclaredAnnotation(TypeQualifier.class);
                 if (typeQualifier == null || typeQualifier.value() == proxyConfig.getProxyType()) {
-                    logger.debug("Call onBeforeStart for: {}", startListener.getClass());
+                    logger.debug("Call onStart for: {}", startListener.getClass());
                     startListener.onStart();
                 } else {
-                    logger.debug("onBeforeStart ignored for {}", startListener.getClass());
+                    logger.debug("onStart ignored for {}", startListener.getClass());
                 }
             }
         } catch (Exception e) {
