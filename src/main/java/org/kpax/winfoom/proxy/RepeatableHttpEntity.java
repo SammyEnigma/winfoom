@@ -28,8 +28,6 @@ import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * A special type of repeatable {@link AbstractHttpEntity}.
@@ -127,7 +125,7 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
         if (streaming) {
             if (this.contentLength > 0 && this.contentLength <= internalBufferLength) {
                 int length;
-                byte[] buffer = new byte[OUTPUT_BUFFER_SIZE];
+                final byte[] buffer = new byte[OUTPUT_BUFFER_SIZE];
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 long remaining = contentLength;
                 while (remaining > 0 && InputOutputs.isAvailable(inputBuffer)) {
@@ -145,8 +143,8 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
                 bufferedBytes = out.toByteArray();
             } else if (contentLength != 0) {
                 tempFilepath = tempDirectory.resolve(InputOutputs.generateCacheFilename());
-                byte[] buffer = new byte[OUTPUT_BUFFER_SIZE];
-                try (CacheFileChannel cacheFileChannel = new CacheFileChannel(buffer)) {
+                final byte[] buffer = new byte[OUTPUT_BUFFER_SIZE];
+                try (CacheFile cacheFile = CacheFile.from(tempFilepath, buffer)) {
                     if (contentLength < 0) {
                         if (isChunked()) {
                             ChunkedInputStream chunkedInputStream = new ChunkedInputStream(inputBuffer);
@@ -156,7 +154,7 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
                                 outStream.flush();
 
                                 // Write to file
-                                cacheFileChannel.write(length);
+                                cacheFile.write(length);
                             }
                         } else {
 
@@ -171,7 +169,7 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
                                 outStream.flush();
 
                                 // Write to file
-                                cacheFileChannel.write(length);
+                                cacheFile.write(length);
                             }
                         }
 
@@ -190,7 +188,7 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
                             remaining -= length;
 
                             // Write to temp file
-                            cacheFileChannel.write(length);
+                            cacheFile.write(length);
                         }
                     }
                 }
@@ -224,30 +222,22 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
     }
 
     @NotThreadSafe
-    private class CacheFileChannel implements AutoCloseable {
+    private static class WindowsCacheFile implements CacheFile {
+
         private final ByteBuffer byteBuffer;
         private final AsynchronousFileChannel fileChannel;
         private long position = 0;
 
-        private CacheFileChannel(final byte[] buffer) throws IOException {
+        private WindowsCacheFile(final Path tempFilepath, final byte[] buffer) throws IOException {
             this.byteBuffer = ByteBuffer.wrap(buffer);
             this.fileChannel = AsynchronousFileChannel.open(tempFilepath,
                     StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.DELETE_ON_CLOSE);
+                    StandardOpenOption.CREATE);
         }
 
-        void write(int length) throws IOException {
-            Future<Integer> future = fileChannel.write(byteBuffer.position(0).limit(length), position);
-            if (!SystemContext.IS_OS_WINDOWS) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    throw new IOException(e);
-                } catch (ExecutionException e) {
-                    throw new IOException(e.getCause());
-                }
-            }
+        @Override
+        public void write(int length) throws IOException {
+            fileChannel.write(byteBuffer.position(0).limit(length), position);
             position += length;
         }
 
@@ -256,4 +246,36 @@ public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeabl
             fileChannel.close();
         }
     }
+
+    @NotThreadSafe
+    private static class SimpleCacheFile implements CacheFile {
+
+        private final byte[] buffer;
+        private final BufferedOutputStream outputStream;
+
+        private SimpleCacheFile(final Path tempFilepath, final byte[] buffer) throws FileNotFoundException {
+            this.buffer = buffer;
+            this.outputStream = new BufferedOutputStream(new FileOutputStream(tempFilepath.toFile()));
+        }
+
+        @Override
+        public void write(int length) throws IOException {
+            outputStream.write(buffer, 0, length);
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.outputStream.close();
+        }
+    }
+
+    private interface CacheFile extends Closeable {
+        void write(int length) throws IOException;
+
+        static CacheFile from(final Path tempFilepath, final byte[] buffer) throws IOException {
+            return SystemContext.IS_OS_WINDOWS ?
+                    new WindowsCacheFile(tempFilepath, buffer) : new SimpleCacheFile(tempFilepath, buffer);
+        }
+    }
+
 }
