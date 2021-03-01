@@ -84,7 +84,7 @@ public class ApiController implements AutoCloseable {
         logger.info("Register API request handlers");
         apiServer = ServerBootstrap.bootstrap().setListenerPort(proxyConfig.getApiPort()).
                 registerHandler("/start",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
@@ -102,7 +102,7 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/stop",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
@@ -121,7 +121,7 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/status",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
@@ -131,7 +131,7 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/validate",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
@@ -154,11 +154,16 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/autodetect",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
                                 logger.debug("'autodetect' command received");
+                                if (systemConfig.isApiReadOnly()) {
+                                    response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+                                    response.setEntity(new StringEntity("Forbidden: Modifying configuration is disabled"));
+                                    return;
+                                }
                                 if (proxyController.isStopped()) {
                                     try {
                                         boolean result = proxyConfig.autoDetect();
@@ -177,7 +182,7 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/config",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
@@ -198,6 +203,11 @@ public class ApiController implements AutoCloseable {
                             public void doPost(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
                                 logger.debug("'config post' command received");
+                                if (systemConfig.isApiReadOnly()) {
+                                    response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+                                    response.setEntity(new StringEntity("Forbidden: Modifying configuration is disabled"));
+                                    return;
+                                }
                                 boolean running = proxyController.isRunning();
                                 if (running) {
                                     response.setEntity(new StringEntity("The local proxy server is up, you need to stop it before applying configuration"));
@@ -227,7 +237,7 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/settings",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
@@ -248,6 +258,11 @@ public class ApiController implements AutoCloseable {
                             public void doPost(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
                                 logger.debug("'settings post' command received");
+                                if (systemConfig.isApiReadOnly()) {
+                                    response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+                                    response.setEntity(new StringEntity("Forbidden: Modifying settings is disabled"));
+                                    return;
+                                }
                                 boolean running = proxyController.isRunning();
                                 if (running) {
                                     response.setEntity(new StringEntity("The local proxy server is up, you need to stop it before changing settings"));
@@ -277,14 +292,14 @@ public class ApiController implements AutoCloseable {
                             }
                         }).
                 registerHandler("/shutdown",
-                        new GenericHttpRequestHandler(credentials, executorService, systemConfig.getApiServerRequestTimeout()) {
+                        new GenericHttpRequestHandler(credentials, executorService, systemConfig) {
                             @Override
                             public void doGet(HttpRequest request, HttpResponse response, HttpContext context)
                                     throws IOException {
                                 logger.debug("'shutdown' command received");
                                 if (systemConfig.isApiDisableShutdown()) {
                                     response.setStatusCode(HttpStatus.SC_FORBIDDEN);
-                                    response.setEntity(new StringEntity("Shutdown is disabled by system configuration"));
+                                    response.setEntity(new StringEntity("Forbidden: Shutdown is disabled"));
                                 } else {
                                     new Thread(applicationContext::close).start();
                                     response.setEntity(new StringEntity("Shutdown initiated"));

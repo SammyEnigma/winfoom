@@ -23,6 +23,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.kpax.winfoom.annotation.NotNull;
+import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.proxy.ProxyExecutorService;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.Throwables;
@@ -49,12 +50,12 @@ public class GenericHttpRequestHandler implements HttpRequestHandler {
 
     private final ProxyExecutorService executorService;
 
-    private final int requestTimeout;
+    private final SystemConfig systemConfig;
 
-    public GenericHttpRequestHandler(@NotNull Credentials credentials, ProxyExecutorService executorService, int requestTimeout) {
+    public GenericHttpRequestHandler(@NotNull Credentials credentials, ProxyExecutorService executorService, SystemConfig systemConfig) {
         this.credentials = credentials;
         this.executorService = executorService;
-        this.requestTimeout = requestTimeout;
+        this.systemConfig = systemConfig;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class GenericHttpRequestHandler implements HttpRequestHandler {
             });
 
             try {
-                future.get(requestTimeout, TimeUnit.SECONDS);
+                future.get(systemConfig.getApiServerRequestTimeout(), TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 logger.debug("Request execution interrupted", e);
                 response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);

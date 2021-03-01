@@ -148,6 +148,9 @@ public class SystemConfig {
     @Value("${FOOM_API_DISABLE_SHUTDOWN:false}")
     private boolean apiDisableShutdown;
 
+    @Value("${FOOM_API_READONLY:false}")
+    private boolean apiReadOnly;
+
     @PostConstruct
     private void init() {
         logger.info("System settings: {}", this);
@@ -215,6 +218,10 @@ public class SystemConfig {
 
     public boolean isApiDisableShutdown() {
         return apiDisableShutdown;
+    }
+
+    public boolean isApiReadOnly() {
+        return apiReadOnly;
     }
 
     public RequestConfig.Builder applyConfig(final RequestConfig.Builder configBuilder) {
