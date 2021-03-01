@@ -39,7 +39,7 @@ import java.util.concurrent.Future;
  * Created on 4/6/2020
  */
 @NotThreadSafe
-public class RepeatableHttpEntity extends AbstractHttpEntity {
+public class RepeatableHttpEntity extends AbstractHttpEntity implements Closeable {
 
     private final SessionInputBufferImpl inputBuffer;
 
@@ -213,6 +213,14 @@ public class RepeatableHttpEntity extends AbstractHttpEntity {
     @Override
     public boolean isStreaming() {
         return streaming;
+    }
+
+    @Override
+    public void close() throws IOException {
+        // Delete the temp file if exists
+        if (tempFilepath != null) {
+            Files.deleteIfExists(tempFilepath);
+        }
     }
 
     @NotThreadSafe
