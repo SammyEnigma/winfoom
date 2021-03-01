@@ -71,7 +71,6 @@ public class KerberosApplication {
     }
 
     public static void main(String[] args) throws Exception {
-
         System.setProperty("sun.security.krb5.debug", "true");
         System.setProperty("sun.security.jgss.debug", "true");
 
@@ -80,7 +79,7 @@ public class KerberosApplication {
             logger.info("Application shutdown at: {}", new Date());
         }));
 
-        System.out.println(new File(".").getAbsolutePath());
+        logger.info("Current path: " + new File(".").getAbsolutePath());
 
         // Set KRB5_CONFIG
         System.setProperty("KRB5_CONFIG", "./src/test/resources/krb5.conf");

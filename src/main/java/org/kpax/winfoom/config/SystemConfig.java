@@ -145,7 +145,7 @@ public class SystemConfig {
     @Value("${kerberos.login.minInterval:30}")
     private Integer kerberosLoginMinInterval;
 
-    @Value("${API_DISABLE_SHUTDOWN:false}")
+    @Value("${FOOM_API_DISABLE_SHUTDOWN:false}")
     private boolean apiDisableShutdown;
 
     @PostConstruct
