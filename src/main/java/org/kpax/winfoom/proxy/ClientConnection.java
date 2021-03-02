@@ -42,7 +42,9 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * It encapsulates a client's connection.
@@ -56,11 +58,6 @@ import java.util.*;
 public final class ClientConnection implements StreamSource, AutoCloseable {
 
     private final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
-
-    /**
-     * The list of {@link AutoCloseable}s to be closed when this instance's {@link #close()} method is called.
-     */
-    private final Set<AutoCloseable> autoCloseables = new HashSet<>();
 
     /**
      * The underlying socket.
@@ -385,16 +382,6 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
     }
 
     /**
-     * Register an {@link AutoCloseable} for later closing.
-     *
-     * @param autoCloseable the {@link AutoCloseable} to be closed.
-     * @return {@code true} if the specified element isn't already registered
-     */
-    public boolean registerAutoCloseable(final AutoCloseable autoCloseable) {
-        return autoCloseables.add(autoCloseable);
-    }
-
-    /**
      * Process the client connection with each available proxy.
      * <p><b>This method does always commit the response.</b></p>
      */
@@ -430,7 +417,6 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
                     sessionInputBuffer,
                     proxyConfig.getTempDirectory(),
                     systemConfig.getInternalBufferLength());
-            registerAutoCloseable(entity);
             Header transferEncoding = request.getFirstHeader(HTTP.TRANSFER_ENCODING);
             if (transferEncoding != null
                     && StringUtils.containsIgnoreCase(transferEncoding.getValue(), HTTP.CHUNK_CODING)) {
@@ -506,7 +492,12 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
 
     @Override
     public void close() {
-        autoCloseables.forEach(InputOutputs::close);
+        if (request instanceof HttpEntityEnclosingRequest) {
+            HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+            if (entity instanceof AutoCloseable) {
+                InputOutputs.close((AutoCloseable) entity);
+            }
+        }
     }
 
     @Override

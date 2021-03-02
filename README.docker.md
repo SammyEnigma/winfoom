@@ -29,6 +29,14 @@ If you want to change the startup parameters, use `FOOM_ARGS` environment variab
 docker run -d --name winfoom -p 3129:3129 -p 9999:9999 -e FOOM_ARGS='-Dsocket.soTimeout=10 -Dconnection.request.timeout=60' ecovaci/winfoom
 ```
 
+If you need to share files between the host and the Docker container:
+
+```
+ docker run -d --name winfoom -p 3129:3129 -p 9999:9999 -v /tmp/winfoom:/data ecovaci/winfoom
+```
+
+The `/data` directory contains the configuration files, logs etc.
+
 After the container starts, use the `foomcli.sh` (or `foomcli.bat`) packed inside `winfoom.zip` (see [Winfoom releases](https://github.com/ecovaci/winfoom/releases)) for management (start, stop, config).
 
 Please read the [Winfoom project's README](https://github.com/ecovaci/winfoom) for details about configuration and management.
