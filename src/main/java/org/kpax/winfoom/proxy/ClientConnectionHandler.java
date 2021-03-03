@@ -54,11 +54,9 @@ public class ClientConnectionHandler implements StopListener {
     /**
      * Supplier for ProxyInfo, manual case.
      */
-    private final SingletonSupplier<ProxyInfo> proxyInfoSupplier = new SingletonSupplier<>(() -> {
-        HttpHost proxyHost = proxyConfig.getProxyType().isDirect() ? null :
-                new HttpHost(proxyConfig.getProxyHost(), proxyConfig.getProxyPort());
-        return new ProxyInfo(proxyConfig.getProxyType(), proxyHost);
-    });
+    private final SingletonSupplier<ProxyInfo> proxyInfoSupplier = new SingletonSupplier<>(
+            () -> new ProxyInfo(proxyConfig.getProxyType(), proxyConfig.getProxyType().isDirect() ? null :
+                    new HttpHost(proxyConfig.getProxyHost(), proxyConfig.getProxyPort())));
 
     /**
      * Create a {@link ClientConnection} instance then process it.
