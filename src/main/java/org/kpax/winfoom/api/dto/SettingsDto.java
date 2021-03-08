@@ -49,7 +49,7 @@ public class SettingsDto {
         this.autostart = autostart;
     }
 
-    public void validate () throws InvalidProxySettingsException {
+    public void validate() throws InvalidProxySettingsException {
         if (apiPort != null) {
             if (!HttpUtils.isValidPort(apiPort)) {
                 throw new InvalidProxySettingsException("Invalid apiPort, allowed range: 1 - 65535");
