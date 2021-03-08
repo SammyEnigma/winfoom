@@ -39,6 +39,8 @@ to your system architecture, unzip it in the Winfoom directory and rename it to 
 
 > 👉 Note: For Windows systems there is `winfoom-windows.zip` archive containing only the Windows executable files together with AdoptOpenJDK v11 (the `jdk` directory), therefore you don't need a Java Runtime Environment to be installed on your operating system.
 
+If you want run Winfoom in command line mode, then you need also `foomcli.zip` archive, containing scripts for application management (start, stop, config, etc).
+
 ### Build from source code
 If you decide to build the executable *jar* file from the source code, you would need these prerequisites:
 * Java JDK 11(+)
@@ -62,12 +64,10 @@ Now you should have the generated executable *jar* file under the *target* direc
 
 ## Run Winfoom
 
-The prepackaged `winfoom.zip` contains the following executable files: `launch.bat`. 
+The prepackaged `winfoom.zip` contains the following executable files: 
 * `launch.bat` launches the application (Windows systems)
 * `launchGui.bat` launches the application in graphical mode (Windows systems)
 * `launch.sh` launches the application (Linux/Macos systems, needs to be made executable)
-* `foomcli.bat` manages the application (Windows systems)
-* `foomcli.sh` manages the application (Linux/Macos systems, needs to be made executable)
 
 On Windows systems, Winfoom can be launched by double-click on `launchGui.bat` or
 from the command prompt:
@@ -100,6 +100,10 @@ Winfoom can be launched with modified Java and system parameters by defining the
 Starting with v3.3.0 it is possible to modify the config directory location by setting the `WINFOOM_CONFIG` environment variable.
 When this variable is not set, the default value would be `WINFOOM_CONFIG=<user.home.directory.path>`. 
 This allows running multiple instances of the application having different configurations.
+
+For GUI-less management you need `foomcli.zip` containing:
+* `foomcli.bat` manages the application (Windows systems)
+* `foomcli.sh` manages the application (Linux/Macos systems, needs to be made executable)
 
 ## Winfoom's logs
 The application log file is placed under `<WINFOOM_CONFIG>/.winfoom/logs` directory.
