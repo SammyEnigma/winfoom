@@ -10,7 +10,7 @@
 
 If you find this application helpful, don't forget to give it a star ⭐
 
-**This project is in maintainance mode, any feature request will be ignored.**
+**This project is no longer maintained!**
 
 # Overview
 Winfoom is an HTTP(s) proxy server facade that allows applications to authenticate through the following proxies: 
