@@ -41,7 +41,7 @@ to your system architecture, unzip it in the Winfoom directory and rename it to 
 
 > 👉 Note: For Windows systems there is `winfoom-windows.zip` archive containing only the Windows executable files together with AdoptOpenJDK v11 (the `jdk` directory), therefore you don't need a Java Runtime Environment to be installed on your operating system.
 
-If you want run Winfoom in command line mode, then you need also `foomcli.zip` archive, containing scripts for application management (start, stop, config, etc).
+If you want to run Winfoom in command line mode, then you also need `foomcli.zip` archive, containing scripts for application management (start, stop, config, etc).
 
 ### Build from source code
 If you decide to build the executable *jar* file from the source code, you would need these prerequisites:
