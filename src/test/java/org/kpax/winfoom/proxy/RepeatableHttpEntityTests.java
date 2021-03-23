@@ -98,7 +98,7 @@ class RepeatableHttpEntityTests {
 
                         // Handle this connection.
                         try {
-                            ClientConnection clientConnection = new ClientConnection(socket, proxyConfig, systemConfig, null);
+                            ClientConnection clientConnection = new ManualProxyClientConnection(socket, proxyConfig, systemConfig, null, null);
                             RepeatableHttpEntity requestEntity;
                             HttpRequest request = clientConnection.getRequest();
                             try {

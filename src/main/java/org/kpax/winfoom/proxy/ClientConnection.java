@@ -55,7 +55,7 @@ import java.util.Locale;
  * @author Eugen Covaci
  */
 @NotThreadSafe
-public final class ClientConnection implements StreamSource, AutoCloseable {
+public abstract class ClientConnection implements StreamSource, AutoCloseable {
 
     private final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
 
@@ -103,12 +103,12 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
     /**
      * The proxy iterator for PAC.
      */
-    private Iterator<ProxyInfo> proxyInfoIterator;
+    protected Iterator<ProxyInfo> proxyInfoIterator;
 
     /**
      * The proxy for manual processing.
      */
-    private ProxyInfo manualProxy;
+    protected ProxyInfo manualProxy;
 
     /**
      * Constructor.<br>
@@ -381,11 +381,7 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
         return request.getRequestLine();
     }
 
-    /**
-     * Process the client connection with each available proxy.
-     * <p><b>This method does always commit the response.</b></p>
-     */
-    void process() {
+    void prepare() {
         if (!connect) {
             try {
                 prepareRequest();
@@ -396,16 +392,13 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
                 throw e;
             }
         }
-        if (manualProxy != null) {
-            processProxy(manualProxy);
-        } else {
-            while (proxyInfoIterator.hasNext()) {
-                if (processProxy(proxyInfoIterator.next())) {
-                    break;
-                }
-            }
-        }
     }
+
+    /**
+     * Process the client connection with each available proxy.
+     * <p><b>This method does always commit the response.</b></p>
+     */
+    abstract void process();
 
     private void prepareRequest() {
         logger.debug("Prepare the request for execution");
@@ -469,7 +462,7 @@ public final class ClientConnection implements StreamSource, AutoCloseable {
      * @param proxy the proxy to process the request with.
      * @return {@code true} iff the processing succeeded.
      */
-    private boolean processProxy(ProxyInfo proxy) {
+    protected boolean processProxy(ProxyInfo proxy) {
         ClientConnectionProcessor connectionProcessor = connectionProcessorSelector.selectConnectionProcessor(
                 connect, proxy);
         logger.debug("Process connection for proxy {} using connectionProcessor: {}", proxy, connectionProcessor);
