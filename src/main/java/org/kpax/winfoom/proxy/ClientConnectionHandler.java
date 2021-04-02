@@ -65,10 +65,11 @@ public class ClientConnectionHandler implements StopListener {
      * @throws Exception
      */
     public void handleConnection(@NotNull final Socket socket) throws Exception {
-
         try (ClientConnection clientConnection = proxyConfig.isAutoConfig() ?
-                new PacClientConnection(socket, proxyConfig, systemConfig, connectionProcessorSelector, pacScriptEvaluator) :
-                new ManualProxyClientConnection(socket, proxyConfig, systemConfig, connectionProcessorSelector, proxyInfoSupplier.get())
+                new PacClientConnection(socket, proxyConfig, systemConfig,
+                        connectionProcessorSelector, pacScriptEvaluator) :
+                new ManualProxyClientConnection(socket, proxyConfig, systemConfig,
+                        connectionProcessorSelector, proxyInfoSupplier.get())
         ) {
             RequestLine requestLine = clientConnection.getRequestLine();
             logger.debug("Handle request: {}", requestLine);
