@@ -20,7 +20,7 @@ if "%1"=="--help" goto usage
 
 set ARGS=-server -XX:+UseG1GC -XX:MaxHeapFreeRatio=30 -XX:MinHeapFreeRatio=10
 
-if defined FOOM_ARGS ARGS=%FOOM_ARGS% %ARGS%
+if defined FOOM_ARGS set ARGS=%FOOM_ARGS% %ARGS%
 
 for %%a in (%*) do (
     if not "%%a"=="--debug" if not "%%a"=="--gui" (
