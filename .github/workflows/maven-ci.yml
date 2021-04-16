@@ -29,4 +29,4 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2    
     - name: Build with Maven
-      run: mvn -B test -Dtest=PacProxyClientConnectionTests#singleProxy_socks4ConnectAndNonConnect_CorrectResponse test --file pom.xml
+      run: mvn -B test -Dtest=SocksProxyClientConnectionTests#socks4Proxy_NonConnect_CorrectResponse test --file pom.xml
