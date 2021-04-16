@@ -86,7 +86,7 @@ public class SocksProxyClientConnectionTests {
     @BeforeAll
     void before() throws Exception {
         beforeEach();
-        socksRemoteProxyServer = ClientAndServer.startClientAndServer("0.0.0.0", PROXY_PORT);
+        socksRemoteProxyServer = ClientAndServer.startClientAndServer(PROXY_PORT);
 
         remoteServer = ServerBootstrap.bootstrap().registerHandler("/get", new HttpRequestHandler() {
 
