@@ -11,7 +11,9 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -23,6 +25,6 @@ jobs:
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        restore-keys: ${{ runner.os }}-m2    
     - name: Build with Maven
       run: mvn -B package --file pom.xml
