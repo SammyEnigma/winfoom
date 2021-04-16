@@ -18,7 +18,7 @@ setlocal EnableExtensions
 
 set ARGS=-server -XX:+UseG1GC -XX:MaxHeapFreeRatio=30 -XX:MinHeapFreeRatio=10 -Dswing.aatext=true -Dspring.profiles.active=gui
 
-if defined FOOM_ARGS ARGS=%FOOM_ARGS% %ARGS%
+if defined FOOM_ARGS set ARGS=%FOOM_ARGS% %ARGS%
 
 if exist out.log (
 del /F out.log
