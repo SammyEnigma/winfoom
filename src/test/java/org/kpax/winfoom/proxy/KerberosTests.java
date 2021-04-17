@@ -36,6 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -96,12 +97,22 @@ public class KerberosTests {
         remoteServer.start();
 
         kerberosHttpProxyMock = new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().withProxyPort(PROXY_PORT)
-                .withDomain(InetAddress.getLocalHost().getCanonicalHostName())
+                .withDomain(resolveCanonicalHostname("localhost"))
                 .build();
         kerberosHttpProxyMock.start();
 
         proxyController.start();
     }
+
+    private String resolveCanonicalHostname(final String host) throws UnknownHostException {
+        final InetAddress in = InetAddress.getByName(host);
+        final String canonicalServer = in.getCanonicalHostName();
+        if (in.getHostAddress().contentEquals(canonicalServer)) {
+            return host;
+        }
+        return canonicalServer;
+    }
+
 
 /*    private String getDomain () throws IOException {
         HttpHost localProxy = new HttpHost("localhost", LOCAL_PROXY_PORT, "http");
