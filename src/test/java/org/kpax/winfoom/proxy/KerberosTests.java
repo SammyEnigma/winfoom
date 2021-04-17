@@ -96,7 +96,7 @@ public class KerberosTests {
         remoteServer.start();
 
         kerberosHttpProxyMock = new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().withProxyPort(PROXY_PORT)
-                .withDomain(InetAddress.getLocalHost().getHostName())
+                .withDomain(InetAddress.getLocalHost().getCanonicalHostName())
                 .build();
         kerberosHttpProxyMock.start();
 
