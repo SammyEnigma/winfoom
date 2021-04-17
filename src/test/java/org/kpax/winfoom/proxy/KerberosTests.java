@@ -1,35 +1,44 @@
 package org.kpax.winfoom.proxy;
 
-import org.apache.http.*;
-import org.apache.http.client.config.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.*;
-import org.apache.http.impl.bootstrap.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.message.*;
-import org.apache.http.protocol.*;
-import org.apache.http.util.*;
-import org.apache.kerby.kerberos.kerb.*;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHttpRequest;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestHandler;
+import org.apache.http.util.EntityUtils;
+import org.apache.kerby.kerberos.kerb.KrbException;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.*;
-import org.kpax.winfoom.*;
-import org.kpax.winfoom.config.*;
-import org.kpax.winfoom.kerberos.*;
-import org.pac4j.core.credentials.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.boot.test.mock.mockito.*;
-import org.springframework.test.annotation.*;
-import org.springframework.test.context.*;
-import org.springframework.test.context.junit.jupiter.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.kpax.winfoom.KerberosApplicationTest;
+import org.kpax.winfoom.config.ProxyConfig;
+import org.kpax.winfoom.kerberos.KerberosHttpProxyMock;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.kpax.winfoom.TestConstants.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.kpax.winfoom.TestConstants.LOCAL_PROXY_PORT;
+import static org.kpax.winfoom.TestConstants.PROXY_PORT;
+import static org.mockito.Mockito.when;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -51,7 +60,7 @@ public class KerberosTests {
     private KerberosHttpProxyMock kerberosHttpProxyMock;
 
     @BeforeEach
-    void beforeEach () {
+    void beforeEach() {
         when(proxyConfig.getProxyType()).thenReturn(ProxyConfig.Type.HTTP);
         when(proxyConfig.getProxyHost()).thenReturn("localhost");
         when(proxyConfig.getProxyPort()).thenReturn(PROXY_PORT);
@@ -71,9 +80,8 @@ public class KerberosTests {
     void before() throws Exception {
         beforeEach();
 
-        kerberosHttpProxyMock = new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().withProxyPort(PROXY_PORT).build();
+        kerberosHttpProxyMock = new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().withProxyPort(PROXY_PORT).withDomain(System.getenv("USERDOMAIN")).build();
         kerberosHttpProxyMock.start();
-
         remoteServer = ServerBootstrap.bootstrap().registerHandler("/post", new HttpRequestHandler() {
 
             @Override
@@ -84,7 +92,6 @@ public class KerberosTests {
 
         }).create();
         remoteServer.start();
-
         proxyController.start();
     }
 
