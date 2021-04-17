@@ -4,9 +4,12 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -32,6 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -80,8 +84,6 @@ public class KerberosTests {
     void before() throws Exception {
         beforeEach();
 
-        kerberosHttpProxyMock = new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().withProxyPort(PROXY_PORT).withDomain(System.getenv("USERDOMAIN")).build();
-        kerberosHttpProxyMock.start();
         remoteServer = ServerBootstrap.bootstrap().registerHandler("/post", new HttpRequestHandler() {
 
             @Override
@@ -92,8 +94,38 @@ public class KerberosTests {
 
         }).create();
         remoteServer.start();
+
+        kerberosHttpProxyMock = new KerberosHttpProxyMock.KerberosHttpProxyMockBuilder().withProxyPort(PROXY_PORT)
+                .withDomain(InetAddress.getLocalHost().getHostName())
+                .build();
+        kerberosHttpProxyMock.start();
+
         proxyController.start();
     }
+
+/*    private String getDomain () throws IOException {
+        HttpHost localProxy = new HttpHost("localhost", LOCAL_PROXY_PORT, "http");
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpHost target = HttpHost.create("http://localhost:" + remoteServer.getLocalPort());
+            HttpPost request = new HttpPost("/post");
+            request.setEntity(new StringEntity("whatever"));
+            try (CloseableHttpResponse response = httpClient.execute(target, request)) {
+                final HttpRoute route = (HttpRoute) context.getAttribute(HttpClientContext.HTTP_ROUTE);
+                if (route == null) {
+                    throw new AuthenticationException("Connection route is not available");
+                }
+                HttpHost host;
+                if (isProxy()) {
+                    host = route.getProxyHost();
+                    if (host == null) {
+                        host = route.getTargetHost();
+                    }
+                } else {
+                    host = route.getTargetHost();
+                }
+            }
+        }
+    }*/
 
     @Test
     @Order(1)
