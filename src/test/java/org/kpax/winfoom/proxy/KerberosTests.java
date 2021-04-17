@@ -113,31 +113,6 @@ public class KerberosTests {
         return canonicalServer;
     }
 
-
-/*    private String getDomain () throws IOException {
-        HttpHost localProxy = new HttpHost("localhost", LOCAL_PROXY_PORT, "http");
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpHost target = HttpHost.create("http://localhost:" + remoteServer.getLocalPort());
-            HttpPost request = new HttpPost("/post");
-            request.setEntity(new StringEntity("whatever"));
-            try (CloseableHttpResponse response = httpClient.execute(target, request)) {
-                final HttpRoute route = (HttpRoute) context.getAttribute(HttpClientContext.HTTP_ROUTE);
-                if (route == null) {
-                    throw new AuthenticationException("Connection route is not available");
-                }
-                HttpHost host;
-                if (isProxy()) {
-                    host = route.getProxyHost();
-                    if (host == null) {
-                        host = route.getTargetHost();
-                    }
-                } else {
-                    host = route.getTargetHost();
-                }
-            }
-        }
-    }*/
-
     @Test
     @Order(1)
     void httpProxy_NonConnect_200OK() throws IOException {
