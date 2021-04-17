@@ -7,6 +7,9 @@ import org.kpax.winfoom.proxy.processor.ConnectionProcessorSelector;
 
 import java.net.Socket;
 
+/**
+ * A specialized {@link ClientConnection} for PAC proxy type.
+ */
 public class PacClientConnection extends ClientConnection {
 
     PacClientConnection(Socket socket,

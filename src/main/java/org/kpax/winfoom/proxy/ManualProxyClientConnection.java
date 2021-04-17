@@ -8,6 +8,9 @@ import org.kpax.winfoom.proxy.processor.ConnectionProcessorSelector;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * A specialized {@link ClientConnection} for any manual proxy type.
+ */
 public class ManualProxyClientConnection extends ClientConnection {
 
     ManualProxyClientConnection(Socket socket,
