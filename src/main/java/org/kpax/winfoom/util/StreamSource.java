@@ -12,9 +12,10 @@
 
 package org.kpax.winfoom.util;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.annotation.ThreadSafe;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,25 +39,11 @@ public interface StreamSource {
         return new DefaultStreamSource(socket.getInputStream(), socket.getOutputStream());
     }
 
+    @Getter
+    @RequiredArgsConstructor
     class DefaultStreamSource implements StreamSource {
         private final InputStream inputStream;
         private final OutputStream outputStream;
-
-        private DefaultStreamSource(@NotNull final InputStream inputStream, @NotNull final OutputStream outputStream) {
-            Assert.notNull(inputStream, "inputStream cannot be null");
-            Assert.notNull(outputStream, "outputStream cannot be null");
-            this.inputStream = inputStream;
-            this.outputStream = outputStream;
-        }
-
-        @NotNull
-        public InputStream getInputStream() {
-            return inputStream;
-        }
-
-        @NotNull
-        public OutputStream getOutputStream() {
-            return outputStream;
-        }
     }
+
 }

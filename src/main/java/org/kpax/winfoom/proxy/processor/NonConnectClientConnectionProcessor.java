@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy.processor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,8 +31,6 @@ import org.kpax.winfoom.proxy.ClientConnection;
 import org.kpax.winfoom.proxy.HttpClientBuilderFactory;
 import org.kpax.winfoom.proxy.ProxyInfo;
 import org.kpax.winfoom.util.HttpUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,11 +46,10 @@ import java.net.UnknownHostException;
  * @author Eugen Covaci {@literal eugen.covaci.q@gmail.com}
  * Created on 4/13/2020
  */
+@Slf4j
 @ThreadSafe
 @Component
 class NonConnectClientConnectionProcessor extends ClientConnectionProcessor {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private SystemConfig systemConfig;

@@ -13,6 +13,7 @@
 
 package org.kpax.winfoom.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -27,8 +28,6 @@ import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.proxy.ProxyExecutorService;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.Throwables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -42,9 +41,8 @@ import java.util.concurrent.TimeoutException;
  * The base class for all API request handlers.
  * <p>It provides basic authentication and authorization.
  */
+@Slf4j
 public class GenericHttpRequestHandler implements HttpRequestHandler {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Credentials credentials;
 

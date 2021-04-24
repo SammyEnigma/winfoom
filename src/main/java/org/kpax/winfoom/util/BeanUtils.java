@@ -13,16 +13,15 @@
 
 package org.kpax.winfoom.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 
+@Slf4j
 public class BeanUtils {
-    private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
     public static void copyProperties(Iterator<String> fieldNamesItr, Object source, Object destination)
             throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {

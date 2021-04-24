@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -21,8 +22,6 @@ import org.kpax.winfoom.annotation.ThreadSafe;
 import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.proxy.listener.StopListener;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,12 +36,11 @@ import java.util.concurrent.TimeUnit;
  * It manages the HTTP connection pooling mechanism.
  * <p>Only used for non-CONNECT HTTP requests.
  */
+@Slf4j
 @ThreadSafe
 @Order(1)
 @Component
 class ConnectionPoolingManager implements StopListener {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private SystemConfig systemConfig;

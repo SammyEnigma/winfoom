@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.kpax.winfoom.annotation.ThreadSafe;
 import org.kpax.winfoom.annotation.TypeQualifier;
 import org.kpax.winfoom.config.ProxyConfig;
@@ -19,8 +20,6 @@ import org.kpax.winfoom.pac.net.IpAddresses;
 import org.kpax.winfoom.proxy.listener.StartListener;
 import org.kpax.winfoom.proxy.listener.StopListener;
 import org.kpax.winfoom.util.DomainUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -39,11 +38,10 @@ import java.util.stream.Stream;
  *
  * @author Eugen Covaci
  */
+@Slf4j
 @ThreadSafe
 @Component
 public class ProxyController {
-
-    private final Logger logger = LoggerFactory.getLogger(ProxyController.class);
 
     @Autowired
     private AbstractApplicationContext applicationContext;

@@ -12,12 +12,15 @@
 
 package org.kpax.winfoom.util;
 
+import lombok.Getter;
+
 /**
  * An immutable class that encapsulates a GUI message.
  *
  * @author Eugen Covaci {@literal eugen.covaci.q@gmail.com}
  * Created on 2/28/2020
  */
+@Getter
 public final class Message {
 
     /**
@@ -49,14 +52,6 @@ public final class Message {
 
     public static Message info(String text) {
         return new Message(MessageType.INFO, text);
-    }
-
-    public MessageType getType() {
-        return type;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public enum MessageType {

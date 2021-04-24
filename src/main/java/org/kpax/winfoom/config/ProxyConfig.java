@@ -14,6 +14,8 @@ package org.kpax.winfoom.config;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -30,8 +32,6 @@ import org.kpax.winfoom.util.DomainUser;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.jna.IEProxyConfig;
 import org.kpax.winfoom.util.jna.WinHttpHelpers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -58,6 +58,8 @@ import java.util.*;
  *
  * @author Eugen Covaci
  */
+@ToString(doNotUseGetters = true)
+@Slf4j
 @JsonPropertyOrder({"proxyType", "proxyHost", "proxyPort", "proxyUsername", "proxyPassword", "proxyStorePassword",
         "proxyPacFileLocation", "blacklistTimeout",
         "localPort", "proxyTestUrl", "autostart", "autodetect"})
@@ -68,8 +70,6 @@ import java.util.*;
 public class ProxyConfig implements StartListener {
 
     public static final String FILENAME = "proxy.properties";
-
-    private final Logger logger = LoggerFactory.getLogger(ProxyConfig.class);
 
     @Value("${app.version}")
     private String appVersion;
@@ -719,36 +719,6 @@ public class ProxyConfig implements StartListener {
         }
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ProxyConfig{" +
-                "appVersion='" + appVersion + '\'' +
-                ", apiPort=" + apiPort +
-                ", apiToken='" + apiToken + '\'' +
-                ", proxyType=" + proxyType +
-                ", localPort=" + localPort +
-                ", proxyHttpHost='" + proxyHttpHost + '\'' +
-                ", proxySocks5Host='" + proxySocks5Host + '\'' +
-                ", proxySocks4Host='" + proxySocks4Host + '\'' +
-                ", proxyHttpPort=" + proxyHttpPort +
-                ", proxySocks5Port=" + proxySocks5Port +
-                ", proxySocks4Port=" + proxySocks4Port +
-                ", proxyTestUrl='" + proxyTestUrl + '\'' +
-                ", proxySocks5Username='" + proxySocks5Username + '\'' +
-                ", proxyHttpUsername='" + proxyHttpUsername + '\'' +
-                ", useCurrentCredentials=" + useCurrentCredentials +
-                ", proxyPacFileLocation='" + proxyPacFileLocation + '\'' +
-                ", blacklistTimeout=" + blacklistTimeout +
-                ", proxyPacUsername='" + proxyPacUsername + '\'' +
-                ", pacHttpAuthProtocol=" + pacHttpAuthProtocol +
-                ", autostart=" + autostart +
-                ", autodetect=" + autodetect +
-                ", httpAuthProtocol=" + httpAuthProtocol +
-                ", krb5ConfFilepath='" + krb5ConfFilepath + '\'' +
-                ", tempDirectory=" + tempDirectory +
-                '}';
     }
 
     @Override

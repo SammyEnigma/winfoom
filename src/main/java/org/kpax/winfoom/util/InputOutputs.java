@@ -12,11 +12,10 @@
 
 package org.kpax.winfoom.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.io.SessionInputBufferImpl;
 import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.config.SystemConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -32,11 +31,10 @@ import java.util.Properties;
 /**
  * @author Eugen Covaci
  */
+@Slf4j
 public final class InputOutputs {
 
     public static final int DEFAULT_BUFFER_SIZE = 8192;
-
-    private static final Logger logger = LoggerFactory.getLogger(InputOutputs.class);
 
     private InputOutputs() {
     }

@@ -41,7 +41,6 @@ public class HttpClientBuilderFactory {
     @Autowired
     private SystemConfig systemConfig;
 
-
     @Autowired
     private ProxyConfig proxyConfig;
 

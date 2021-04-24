@@ -1,14 +1,13 @@
 package org.kpax.winfoom.proxy.auth;
 
 import com.sun.security.auth.module.Krb5LoginModule;
+import lombok.extern.slf4j.Slf4j;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.proxy.listener.ProxyListener;
 import org.kpax.winfoom.util.DateUtils;
 import org.kpax.winfoom.util.functional.PrivilegedActionWrapper;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -27,10 +26,9 @@ import java.util.Map;
 /**
  * Responsible for Kerberos authentication, authorization.
  */
+@Slf4j
 @Component
 public class KerberosModule implements ProxyListener {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ApplicationContext applicationContext;

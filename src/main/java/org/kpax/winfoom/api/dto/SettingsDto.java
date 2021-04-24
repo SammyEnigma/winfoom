@@ -13,41 +13,23 @@
 
 package org.kpax.winfoom.api.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
 import org.kpax.winfoom.util.HttpUtils;
 
 /**
  * The settings DTO for API server.
  */
+@Getter
+@Setter
+@ToString
 public class SettingsDto {
 
     private Integer apiPort;
     private Boolean autodetect;
     private Boolean autostart;
-
-    public Integer getApiPort() {
-        return apiPort;
-    }
-
-    public void setApiPort(Integer apiPort) {
-        this.apiPort = apiPort;
-    }
-
-    public Boolean getAutodetect() {
-        return autodetect;
-    }
-
-    public void setAutodetect(Boolean autodetect) {
-        this.autodetect = autodetect;
-    }
-
-    public Boolean getAutostart() {
-        return autostart;
-    }
-
-    public void setAutostart(Boolean autostart) {
-        this.autostart = autostart;
-    }
 
     public void validate() throws InvalidProxySettingsException {
         if (apiPort != null) {
@@ -57,12 +39,4 @@ public class SettingsDto {
         }
     }
 
-    @Override
-    public String toString() {
-        return "SettingsDto{" +
-                "apiPort=" + apiPort +
-                ", autodetect=" + autodetect +
-                ", autostart=" + autostart +
-                '}';
-    }
 }

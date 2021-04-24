@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy.processor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.RequestLine;
@@ -23,8 +24,6 @@ import org.kpax.winfoom.proxy.ClientConnection;
 import org.kpax.winfoom.proxy.ProxyInfo;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.StreamSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +36,11 @@ import java.net.*;
  * @author Eugen Covaci {@literal eugen.covaci.q@gmail.com}
  * Created on 4/16/2020
  */
+
+@Slf4j
 @ThreadSafe
 @Component
 class SocksConnectClientConnectionProcessor extends ClientConnectionProcessor {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private SystemConfig systemConfig;

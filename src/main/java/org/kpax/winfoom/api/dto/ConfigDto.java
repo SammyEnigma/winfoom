@@ -13,6 +13,9 @@
 
 package org.kpax.winfoom.api.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.config.SystemContext;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
@@ -22,6 +25,9 @@ import org.springframework.util.Assert;
 /**
  * The config DTO for API server.
  */
+@Getter
+@Setter
+@ToString
 public class ConfigDto {
 
     private ProxyConfig.Type proxyType;
@@ -38,101 +44,6 @@ public class ConfigDto {
     private ProxyConfig.HttpAuthProtocol httpAuthProtocol;
     private ProxyConfig.HttpAuthProtocol pacHttpAuthProtocol;
 
-    public ProxyConfig.Type getProxyType() {
-        return proxyType;
-    }
-
-    public void setProxyType(ProxyConfig.Type proxyType) {
-        this.proxyType = proxyType;
-    }
-
-    public Boolean getUseCurrentCredentials() {
-        return useCurrentCredentials;
-    }
-
-    public void setUseCurrentCredentials(Boolean useCurrentCredentials) {
-        this.useCurrentCredentials = useCurrentCredentials;
-    }
-
-    public String getProxyUsername() {
-        return proxyUsername;
-    }
-
-    public void setProxyUsername(String proxyUsername) {
-        this.proxyUsername = proxyUsername;
-    }
-
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    public void setProxyPassword(String proxyPassword) {
-        this.proxyPassword = proxyPassword;
-    }
-
-    public String getProxyTestUrl() {
-        return proxyTestUrl;
-    }
-
-    public void setProxyTestUrl(String proxyTestUrl) {
-        this.proxyTestUrl = proxyTestUrl;
-    }
-
-    public String getProxyPacFileLocation() {
-        return proxyPacFileLocation;
-    }
-
-    public void setProxyPacFileLocation(String proxyPacFileLocation) {
-        this.proxyPacFileLocation = proxyPacFileLocation;
-    }
-
-    public Integer getBlacklistTimeout() {
-        return blacklistTimeout;
-    }
-
-    public void setBlacklistTimeout(Integer blacklistTimeout) {
-        this.blacklistTimeout = blacklistTimeout;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    public Integer getLocalPort() {
-        return localPort;
-    }
-
-    public void setLocalPort(Integer localPort) {
-        this.localPort = localPort;
-    }
-
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
-    public void setProxyPort(Integer proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public ProxyConfig.HttpAuthProtocol getHttpAuthProtocol() {
-        return httpAuthProtocol;
-    }
-
-    public void setHttpAuthProtocol(ProxyConfig.HttpAuthProtocol httpAuthProtocol) {
-        this.httpAuthProtocol = httpAuthProtocol;
-    }
-
-    public ProxyConfig.HttpAuthProtocol getPacHttpAuthProtocol() {
-        return pacHttpAuthProtocol;
-    }
-
-    public void setPacHttpAuthProtocol(ProxyConfig.HttpAuthProtocol pacHttpAuthProtocol) {
-        this.pacHttpAuthProtocol = pacHttpAuthProtocol;
-    }
 
     public void validate() throws InvalidProxySettingsException {
         if (proxyHost != null || proxyPort != null || useCurrentCredentials != null) {
@@ -160,21 +71,4 @@ public class ConfigDto {
         }
     }
 
-    @Override
-    public String toString() {
-        return "ConfigDto{" +
-                "proxyType=" + proxyType +
-                ", useCurrentCredentials=" + useCurrentCredentials +
-                ", proxyUsername='" + proxyUsername + '\'' +
-                ", proxyPassword='" + proxyPassword + '\'' +
-                ", proxyPacFileLocation='" + proxyPacFileLocation + '\'' +
-                ", blacklistTimeout=" + blacklistTimeout +
-                ", proxyHost='" + proxyHost + '\'' +
-                ", proxyPort=" + proxyPort +
-                ", localPort=" + localPort +
-                ", proxyTestUrl='" + proxyTestUrl + '\'' +
-                ", httpAuthProtocol=" + httpAuthProtocol +
-                ", pacHttpAuthProtocol=" + pacHttpAuthProtocol +
-                '}';
-    }
 }

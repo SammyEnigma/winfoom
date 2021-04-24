@@ -1,26 +1,19 @@
 package org.kpax.winfoom.util;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.kpax.winfoom.annotation.NotNull;
 
 import java.util.Locale;
 
+@Getter
+@ToString
+@RequiredArgsConstructor
 public final class DomainUser {
 
     private final String username;
     private final String domain;
-
-    public DomainUser(String username, String domain) {
-        this.username = username;
-        this.domain = domain;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
 
     public static DomainUser from(@NotNull String domainUsername) {
         int backslashIndex = domainUsername.indexOf('\\');
@@ -40,11 +33,4 @@ public final class DomainUser {
         }
     }
 
-    @Override
-    public String toString() {
-        return "DomainUser{" +
-                "username='" + username + '\'' +
-                ", domain='" + domain + '\'' +
-                '}';
-    }
 }

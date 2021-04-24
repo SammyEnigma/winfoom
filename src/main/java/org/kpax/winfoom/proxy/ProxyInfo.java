@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.Getter;
 import org.apache.http.HttpHost;
 import org.kpax.winfoom.annotation.ThreadSafe;
 import org.springframework.util.Assert;
@@ -21,6 +22,7 @@ import java.util.Objects;
 /**
  * Encapsulate the proxy information: type, host an port
  */
+@Getter
 @ThreadSafe
 public final class ProxyInfo {
 
@@ -36,14 +38,6 @@ public final class ProxyInfo {
         Assert.notNull(type, "type cannot be null");
         this.type = type;
         this.proxyHost = proxyHost;
-    }
-
-    public ProxyType getType() {
-        return type;
-    }
-
-    public HttpHost getProxyHost() {
-        return proxyHost;
     }
 
     @Override

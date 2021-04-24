@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
@@ -20,8 +21,6 @@ import org.kpax.winfoom.proxy.ProxyController;
 import org.kpax.winfoom.proxy.ProxyValidator;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.SwingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Profile;
@@ -39,12 +38,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
 
+@Slf4j
 @Profile("gui")
 @Component
 public class AppFrame extends JFrame {
     private static final long serialVersionUID = 4009799697210970761L;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final int ICON_SIZE = 16;
 

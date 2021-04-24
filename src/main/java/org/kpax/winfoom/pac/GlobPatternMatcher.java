@@ -12,13 +12,12 @@
 
 package org.kpax.winfoom.pac;
 
+import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -28,10 +27,9 @@ import java.util.regex.Pattern;
 /**
  * GLOB pattern matcher.
  */
+@Slf4j
 @Component
 public class GlobPatternMatcher {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private SystemConfig systemConfig;

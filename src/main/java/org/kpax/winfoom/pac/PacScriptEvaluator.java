@@ -31,6 +31,7 @@
 package org.kpax.winfoom.pac;
 
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
@@ -52,8 +53,6 @@ import org.kpax.winfoom.proxy.ProxyInfo;
 import org.kpax.winfoom.proxy.listener.ProxyListener;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -68,13 +67,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @ThreadSafe
 @Order(3)
 @Component
 public class PacScriptEvaluator implements ProxyListener {
-
-    private final Logger logger = LoggerFactory.getLogger(PacScriptEvaluator.class);
-
 
     /**
      * Main entry point to JavaScript PAC script as defined by Netscape.

@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.config.MessageConstraints;
@@ -32,8 +33,6 @@ import org.kpax.winfoom.util.CrlfConverter;
 import org.kpax.winfoom.util.HttpUtils;
 import org.kpax.winfoom.util.InputOutputs;
 import org.kpax.winfoom.util.StreamSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,10 +53,9 @@ import java.util.Locale;
  *
  * @author Eugen Covaci
  */
+@Slf4j
 @NotThreadSafe
 public abstract class ClientConnection implements StreamSource, AutoCloseable {
-
-    private final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
 
     /**
      * The underlying socket.

@@ -15,6 +15,7 @@ package org.kpax.winfoom.api;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -37,8 +38,6 @@ import org.kpax.winfoom.proxy.ProxyExecutorService;
 import org.kpax.winfoom.proxy.ProxyValidator;
 import org.kpax.winfoom.util.BeanUtils;
 import org.kpax.winfoom.util.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Profile;
@@ -53,13 +52,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Open an API server and map various request handlers.
  */
+@Slf4j
 @Profile({"!gui & !test"})
 @Component
 public class ApiController implements AutoCloseable {
 
     private static final int SHUTDOWN_GRACE_PERIOD = 1000;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private HttpServer apiServer;
 

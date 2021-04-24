@@ -13,6 +13,7 @@
 package org.kpax.winfoom.proxy;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.RequestLine;
 import org.kpax.winfoom.annotation.NotNull;
@@ -23,8 +24,6 @@ import org.kpax.winfoom.pac.PacScriptEvaluator;
 import org.kpax.winfoom.proxy.listener.StopListener;
 import org.kpax.winfoom.proxy.processor.ConnectionProcessorSelector;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +32,10 @@ import java.net.Socket;
 /**
  * Responsible for handling client's connection.
  */
+@Slf4j
 @ThreadSafe
 @Component
 public class ClientConnectionHandler implements StopListener {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ProxyConfig proxyConfig;

@@ -12,10 +12,9 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.kpax.winfoom.proxy.listener.StopListener;
 import org.kpax.winfoom.util.functional.SingletonSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +27,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A wrapper for {@link ThreadPoolExecutor} that forbids {@link #shutdown()}, {@link #shutdownNow()}
  * and {@link #awaitTermination(long, TimeUnit)}.
  */
+@Slf4j
 @Order(2)
 @Component
 public class ProxyExecutorService implements ExecutorService, StopListener {
-
-    private final Logger logger = LoggerFactory.getLogger(ProxyExecutorService.class);
 
     private final SingletonSupplier<ThreadPoolExecutor> threadPoolSupplier;
 

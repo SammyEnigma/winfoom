@@ -13,21 +13,19 @@
 
 package org.kpax.winfoom.starter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.kpax.winfoom.util.SwingUtils;
 import org.kpax.winfoom.view.AppFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Profile("gui")
 @Component
 public class GuiStarter implements ApplicationListener<ApplicationReadyEvent> {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private AppFrame appFrame;

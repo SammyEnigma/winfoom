@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -23,8 +24,6 @@ import org.kpax.winfoom.annotation.ThreadSafe;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.exception.InvalidProxySettingsException;
 import org.kpax.winfoom.util.HttpUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +32,10 @@ import java.io.IOException;
 /**
  * Responsible with proxy config validation.
  */
+@Slf4j
 @ThreadSafe
 @Component
 public class ProxyValidator {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ProxyConfig proxyConfig;

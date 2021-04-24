@@ -44,13 +44,12 @@
 package org.kpax.winfoom.pac;
 
 import inet.ipaddr.IPAddressString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.kpax.winfoom.config.SystemConfig;
 import org.kpax.winfoom.pac.datetime.PacDateTimeUtils;
 import org.kpax.winfoom.pac.net.IpAddressMatcher;
 import org.kpax.winfoom.pac.net.IpAddresses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,10 +67,9 @@ import java.util.stream.Collectors;
 /**
  * Default implementation of a the PAC 'helper functions'.
  */
+@Slf4j
 @Component
 public class DefaultPacHelperMethods implements PacHelperMethodsNetscape, PacHelperMethodsMicrosoft {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultPacHelperMethods.class);
 
     private static final Predicate<InetAddress> isIPv4Predicate = a -> a.getClass() == Inet4Address.class;
 

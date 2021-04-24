@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.proxy.processor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
 import org.kpax.winfoom.annotation.NotNull;
@@ -23,8 +24,6 @@ import org.kpax.winfoom.proxy.ProxyBlacklist;
 import org.kpax.winfoom.proxy.ProxyInfo;
 import org.kpax.winfoom.proxy.auth.KerberosModule;
 import org.kpax.winfoom.util.StreamSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.security.auth.login.LoginException;
@@ -43,9 +42,8 @@ import java.util.concurrent.Future;
  * @author Eugen Covaci {@literal eugen.covaci.q@gmail.com}
  * Created on 4/13/2020
  */
+@Slf4j
 public abstract class ClientConnectionProcessor {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ExecutorService executorService;

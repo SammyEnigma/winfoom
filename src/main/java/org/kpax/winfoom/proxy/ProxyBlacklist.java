@@ -12,12 +12,11 @@
 
 package org.kpax.winfoom.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.annotation.ThreadSafe;
 import org.kpax.winfoom.config.ProxyConfig;
 import org.kpax.winfoom.proxy.listener.StopListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +32,10 @@ import java.util.stream.Collectors;
  * <p>If a proxy doesn't respond to a connect attempt, it can be blacklisted
  * which means it will not be used again until the blacklist timeout happens.
  */
+@Slf4j
 @ThreadSafe
 @Component
 public class ProxyBlacklist implements StopListener {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Key = the blacklisted ProxyInfo<br>

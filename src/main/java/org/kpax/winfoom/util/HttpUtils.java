@@ -12,6 +12,7 @@
 
 package org.kpax.winfoom.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.*;
@@ -25,8 +26,6 @@ import org.kpax.winfoom.annotation.NotNull;
 import org.kpax.winfoom.exception.PacFileException;
 import org.kpax.winfoom.exception.PacScriptException;
 import org.kpax.winfoom.proxy.ProxyInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.ByteArrayOutputStream;
@@ -47,6 +46,7 @@ import java.util.stream.Stream;
  *
  * @author Eugen Covaci
  */
+@Slf4j
 public final class HttpUtils {
 
     /**
@@ -92,8 +92,6 @@ public final class HttpUtils {
      * The time zone to use in the date header.
      */
     public static final TimeZone GMT = TimeZone.getTimeZone("GMT");
-
-    private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
     private HttpUtils() {
     }

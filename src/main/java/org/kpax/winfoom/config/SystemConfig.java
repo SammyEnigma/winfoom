@@ -12,9 +12,10 @@
 
 package org.kpax.winfoom.config;
 
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.config.RequestConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,9 @@ import java.net.SocketException;
  *
  * @author Eugen Covaci
  */
+@Slf4j
+@ToString
+@Getter
 @Component
 @PropertySource(value = "file:${" + SystemConfig.WINFOOM_CONFIG_ENV + "}/" + SystemConfig.APP_HOME_DIR_NAME + "/" + SystemConfig.FILENAME,
         ignoreResourceNotFound = true)
@@ -40,8 +44,6 @@ public class SystemConfig {
 
     public static final String BACKUP_DIR_NAME = "backup";
     public static final String WINFOOM_CONFIG_ENV = "WINFOOM_CONFIG";
-
-    private final Logger logger = LoggerFactory.getLogger(SystemConfig.class);
 
     /**
      * Connection pool property:  max polled connections per route.
@@ -156,74 +158,6 @@ public class SystemConfig {
         logger.info("System settings: {}", this);
     }
 
-    public Integer getMaxConnectionsPerRoute() {
-        return maxConnectionsPerRoute;
-    }
-
-    public Integer getMaxConnections() {
-        return maxConnections;
-    }
-
-    public Integer getInternalBufferLength() {
-        return internalBufferLength;
-    }
-
-    public Integer getConnectionManagerCleanInterval() {
-        return connectionManagerCleanInterval;
-    }
-
-    public Integer getConnectionManagerIdleTimeout() {
-        return connectionManagerIdleTimeout;
-    }
-
-    public Integer getServerSocketBacklog() {
-        return serverSocketBacklog;
-    }
-
-    public Integer getSocketSoTimeout() {
-        return socketSoTimeout;
-    }
-
-    public Integer getSocketConnectTimeout() {
-        return socketConnectTimeout;
-    }
-
-    public boolean isPreferIPv6Addresses() {
-        return preferIPv6Addresses;
-    }
-
-    public Integer getCacheGlobPatternCapacity() {
-        return cacheGlobPatternCapacity;
-    }
-
-    public Integer getCacheCredentialsProviderCapacity() {
-        return cacheCredentialsProviderCapacity;
-    }
-
-    public Integer getPacScriptEnginePoolMaxTotal() {
-        return pacScriptEnginePoolMaxTotal;
-    }
-
-    public Integer getPacScriptEnginePoolMinIdle() {
-        return pacScriptEnginePoolMinIdle;
-    }
-
-    public Integer getApiServerRequestTimeout() {
-        return apiServerRequestTimeout;
-    }
-
-    public Integer getKerberosLoginMinInterval() {
-        return kerberosLoginMinInterval;
-    }
-
-    public boolean isApiDisableShutdown() {
-        return apiDisableShutdown;
-    }
-
-    public boolean isApiReadOnly() {
-        return apiReadOnly;
-    }
-
     public RequestConfig.Builder applyConfig(final RequestConfig.Builder configBuilder) {
         return configBuilder.setConnectTimeout(socketConnectTimeout * 1000)
                 .setConnectionRequestTimeout(connectionRequestTimeout * 1000)
@@ -235,24 +169,4 @@ public class SystemConfig {
         return socket;
     }
 
-    @Override
-    public String toString() {
-        return "SystemConfig{" +
-                "maxConnectionsPerRoute=" + maxConnectionsPerRoute +
-                ", maxConnections=" + maxConnections +
-                ", internalBufferLength=" + internalBufferLength +
-                ", connectionManagerCleanInterval=" + connectionManagerCleanInterval +
-                ", connectionManagerIdleTimeout=" + connectionManagerIdleTimeout +
-                ", serverSocketBacklog=" + serverSocketBacklog +
-                ", socketSoTimeout=" + socketSoTimeout +
-                ", socketConnectTimeout=" + socketConnectTimeout +
-                ", connectionRequestTimeout=" + connectionRequestTimeout +
-                ", preferIPv6Addresses=" + preferIPv6Addresses +
-                ", cacheGlobPatternCapacity=" + cacheGlobPatternCapacity +
-                ", pacScriptEnginePoolMaxTotal=" + pacScriptEnginePoolMaxTotal +
-                ", pacScriptEnginePoolMinIdle=" + pacScriptEnginePoolMinIdle +
-                ", apiServerRequestTimeout=" + apiServerRequestTimeout +
-                ", kerberosLoginMinInterval=" + kerberosLoginMinInterval +
-                '}';
-    }
 }
